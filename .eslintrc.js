@@ -4,6 +4,7 @@ module.exports = {
         'eslint:recommended',
         'plugin:prettier/recommended',
         'plugin:import/warnings',
+        'plugin:json/recommended',
     ],
     rules: {
         'no-constant-condition': ['error', { checkLoops: false }],

@@ -1,14 +1,13 @@
 import './index.styl';
 import { js as jsb } from 'js-beautify/';
 import core from './core';
-import config from './config';
+import config from './config.json';
 
-const {
-    bundleName,
-    bundleAliases,
-    bundleFunctionAliases,
-    alphaLocation,
-} = config;
+const { bundleName, bundleFunctionAliases, alphaLocation } = config;
+
+let bundleAliases = [bundleName];
+
+let injectionFinished = false;
 
 function injectMain(src) {
     let source = src;
@@ -21,6 +20,18 @@ function injectMain(src) {
         });
         if (numInstances != 1) throw new Error('Invalid regex at:\n' + str);
     }
+
+    const inverse = ((obj) => {
+        var ne = {};
+
+        for (var prop in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                ne[obj[prop]] = prop;
+            }
+        }
+
+        return ne;
+    })(Object.assign({}, config.pairings));
 
     const bundleAliasMatcher = new RegExp(
         'var (\\w+) = ' + bundleName + ';',
@@ -40,7 +51,7 @@ function injectMain(src) {
         '\\.(?:' +
         bundleFunctionAliases.join('|') +
         ')\\(' +
-        config.inverse[str] +
+        inverse[str] +
         '\\)';
 
     for (const x of matchers) {
@@ -50,17 +61,8 @@ function injectMain(src) {
     const s = document.createElement('script');
     s.text = source;
     (document.head || document.documentElement).appendChild(s);
+    injectionFinished = true;
 }
-
-let f = (url) => fetch(url).then((res) => res.text());
-
-async function inject() {
-    f(alphaLocation).then(async (alpha) => {
-        injectMain(jsb(alpha));
-    });
-}
-
-window.addEventListener('load', inject);
 
 const plugins = Object.create(null);
 
@@ -71,6 +73,7 @@ function escape(string) {
 }
 
 function injector(name, f) {
+    if (injectionFinished) throw new Error('Injection has already finished.');
     const plugin = {
         name: name,
         main: f,
@@ -155,3 +158,14 @@ function injector(name, f) {
 }
 
 core(injector);
+
+window.injector = injector;
+
+function inject() {
+    fetch(alphaLocation)
+        .then((res) => res.text())
+        .then((alpha) => injectMain(jsb(alpha)));
+}
+
+if (typeof disableInject === 'undefined')
+    window.addEventListener('load', inject);
