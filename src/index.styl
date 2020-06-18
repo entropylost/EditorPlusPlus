@@ -1,0 +1,99 @@
+#eppContainer
+    right: 10px
+    top: 150px
+    display: inline-block
+    position: fixed
+    z-index: 9999999
+
+#eppTextTop
+    transform: translateY(50%)
+    clip-path: polygon(0% 50%, 5% 0%, 95% 0%, 100% 50%)
+
+#eppTextBottom
+    transform: translateY(-50%)
+    clip-path: polygon(0% 50%, 5% 100%, 95% 100%, 100% 50%)
+
+#eppTextTop, #eppTextBottom
+    font-size: x-large
+    color: #FFF
+    position: relative
+    background-color: #111111
+    padding: 10px 20px
+
+#eppInteriorContainer
+    font-size: large
+    color: #FFF
+    background-color: #111111
+    overflow: hidden
+
+#eppInterior
+    padding: 10px
+    box-sizing: border-box
+    height: 100%
+
+.opened
+    max-height: auto
+
+.closed
+    max-height: 0px
+    width: 0px
+
+.floatLeft
+    float: left
+
+.floatRight
+    float: right
+
+.button
+    height: 20px
+    line-height: 20px
+    padding: 10px 20px
+    margin-left: -10px
+    margin-right: -10px
+    text-align: center
+    transition: color 0.1s, background-color 0.1s
+
+.button:hover:not(.checkboxButton), .buttonActivated
+    background-color: #FFF
+    color: #111111
+
+.button:not(.checkboxButton):active
+    filter: brightness(75%)
+
+.button.buttonDisabled
+    pointer-events: none
+    cursor: not-allowed
+
+.button.buttonDisabled:hover
+    background-color: #111111
+    color: #FFF
+
+.selector
+    margin-left: -10px
+    margin-right: -10px
+    padding: 10px
+    text-align: center
+
+.selector:hover
+    background-color: #3A3A3A
+
+.activeSelector
+    background-color: #3A3A3A
+
+
+.darkInput
+    display: block
+    background-color: #111111
+    color: #FFF
+    border: 1px solid #3A3A3A
+    margin-left: -10px
+    margin-right: -10px
+    margin-top: 10px
+    margin-bottom: 10px
+    padding: 5px
+    width: 100%
+
+
+.display
+    color: #FFF
+    white-space: nowrap

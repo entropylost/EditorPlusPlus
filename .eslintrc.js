@@ -3,20 +3,20 @@ module.exports = {
     extends: [
         'eslint:recommended',
         'plugin:prettier/recommended',
-        'plugin:import/warnings'
+        'plugin:import/warnings',
     ],
     rules: {
-        'no-constant-condition': ['error', { checkLoops: false }]
+        'no-constant-condition': ['error', { checkLoops: false }],
     },
     globals: {},
     parserOptions: {
-        ecmaVersion: 2018,
+        ecmaVersion: 2020,
         ecmaFeatures: {
-            modules: true
-        }
+            modules: true,
+        },
     },
     env: {
         node: true,
-        es6: true
-    }
+        es6: true,
+    },
 };
