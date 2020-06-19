@@ -79,7 +79,7 @@ function escape(string) {
 }
 
 function injector(name, f, dependencies = [], extra = []) {
-    if (dependencies !== []) {
+    if (dependencies.length !== 0) {
         let isActivated = false;
         delayed.push(() => {
             if (isActivated) return;
@@ -119,6 +119,12 @@ function injector(name, f, dependencies = [], extra = []) {
     const matchEnd = {
         type: 'matchEnd',
     };
+    function regex(text) {
+        return {
+            type: 'regex',
+            data: text,
+        };
+    }
     function add(escape, strings, ...values) {
         matchers.push((matchStr, replace) => {
             let capIndex = 0;
@@ -135,7 +141,7 @@ function injector(name, f, dependencies = [], extra = []) {
                     case 'function':
                         capIndex++;
                         str += ')(';
-                        entries[i] = v;
+                        entries[capIndex] = v;
                         break;
                     case 'object':
                         if (v.type === 'matchStart') {
@@ -155,6 +161,8 @@ function injector(name, f, dependencies = [], extra = []) {
                             capIndex++;
                             str += ')(';
                             isWithinMatch = false;
+                        } else if (v.type === 'regex') {
+                            str += v.data;
                         } else throw new Error('Invalid Type.');
                         break;
                 }
@@ -177,7 +185,7 @@ function injector(name, f, dependencies = [], extra = []) {
     const addString = (strings, ...values) => add(escape, strings, ...values);
     const addRegex = (strings, ...values) => add((x) => x, strings, ...values);
     addString.re = addRegex;
-    f(plugin, ...extra, addString, entry, matchStart, matchEnd);
+    f(plugin, ...extra, addString, entry, matchStart, matchEnd, regex);
     delayed.forEach((x) => x());
     return (f) => {
         injectors.push(f);
