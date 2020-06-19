@@ -10,6 +10,7 @@ let bundleAliases = [bundleName];
 let injectionFinished = false;
 
 function injectMain(src) {
+    for (const x of injectors) x(plugins);
     let source = src;
 
     function replace(str, func) {
@@ -64,7 +65,11 @@ function injectMain(src) {
     injectionFinished = true;
 }
 
+const injectors = [];
+
 const plugins = Object.create(null);
+
+window.plugins = plugins;
 
 const matchers = [];
 
@@ -82,10 +87,8 @@ function injector(name, f) {
     plugins[name] = plugin;
     function entry(name) {
         const computed = [];
-        plugin.locations[name] = {
-            add: (x) => {
-                computed.push(x);
-            },
+        plugin.locations[name] = (x) => {
+            computed.push(x);
         };
         return (...args) => computed.map((x) => x(...args)).join('\n');
     }
@@ -138,15 +141,15 @@ function injector(name, f) {
                         } else throw new Error('Invalid Type.');
                         break;
                 }
-                str += escape(strings.raw[i]);
+                str += escape(strings.raw[i + 1]);
             }
             str += ')';
             return replace(str, (_, ...args) => {
                 const matches = Object.create(null);
-                for (let i = 0; i < args.length; i++)
+                for (let i = 0; i < args.length - 2; i++)
                     if (nameMatch[i] != null) matches[nameMatch[i]] = args[i];
                 let res = '';
-                for (let i = 0; i < args.length; i++) {
+                for (let i = 0; i < args.length - 2; i++) {
                     res += args[i];
                     if (entries[i] != null) res += entries[i](matches);
                 }
@@ -154,7 +157,10 @@ function injector(name, f) {
             });
         });
     }
-    f(add, entry, matchStart, matchEnd);
+    f(plugin, add, entry, matchStart, matchEnd);
+    return (f) => {
+        injectors.push(f);
+    };
 }
 
 core(injector);
@@ -167,5 +173,4 @@ function inject() {
         .then((alpha) => injectMain(jsb(alpha)));
 }
 
-if (typeof disableInject === 'undefined')
-    window.addEventListener('load', inject);
+window.inject = inject;
