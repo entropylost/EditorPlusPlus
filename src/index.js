@@ -72,12 +72,29 @@ const plugins = Object.create(null);
 window.plugins = plugins;
 
 const matchers = [];
+const delayed = [];
 
 function escape(string) {
     return string.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
-function injector(name, f) {
+function injector(name, f, dependencies = [], extra = []) {
+    if (dependencies !== []) {
+        let isActivated = false;
+        delayed.push(() => {
+            if (isActivated) return;
+            for (const x of dependencies) {
+                if (plugins[x] == null) return;
+            }
+            isActivated = true;
+            injector(
+                name,
+                f,
+                [],
+                dependencies.map((x) => plugins[x])
+            );
+        });
+    }
     if (injectionFinished) throw new Error('Injection has already finished.');
     const plugin = {
         name: name,
@@ -102,7 +119,7 @@ function injector(name, f) {
     const matchEnd = {
         type: 'matchEnd',
     };
-    function add(strings, ...values) {
+    function add(escape, strings, ...values) {
         matchers.push((matchStr, replace) => {
             let capIndex = 0;
             let str = '(' + escape(strings.raw[0]);
@@ -157,7 +174,11 @@ function injector(name, f) {
             });
         });
     }
-    f(plugin, add, entry, matchStart, matchEnd);
+    const addString = (strings, ...values) => add(escape, strings, ...values);
+    const addRegex = (strings, ...values) => add((x) => x, strings, ...values);
+    addString.re = addRegex;
+    f(plugin, ...extra, addString, entry, matchStart, matchEnd);
+    delayed.forEach((x) => x());
     return (f) => {
         injectors.push(f);
     };

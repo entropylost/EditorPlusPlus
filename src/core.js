@@ -6,4 +6,5 @@ export default (injector) =>
             console.log(matches.t);
             return 'foo';
         });
+        $``;
     });
