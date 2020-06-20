@@ -15,7 +15,7 @@ module.exports = {
             { test: /\.svg$/, loader: 'svg-inline-loader' },
         ],
     },
-    mode: 'production',
+    mode: 'development',
     devtool: 'source-map',
     performance: { hints: false },
     plugins: [

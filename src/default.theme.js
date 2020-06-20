@@ -2,10 +2,10 @@ import $ from '@implode-nz/html/';
 
 export default (epp, theme) => {
     import('./index.styl');
-    const splitElements = 'Editor++'
-        .split('')
-        .flatMap((e) => [$.span([]), e])
-        .slice(1);
-    const root = $.div('container', splitElements);
+    const splitElements = 'Editor++'.split('').flatMap((e) => [$.span([]), e]);
+    const titleInterior = $.div('title-interior', splitElements);
+    const title = $.div('title', [$.div.icon('icon', []), titleInterior]);
+    //const interior = $.div('interior', []);
+    const root = $.div('container', [title /*, interior*/]);
     document.body.appendChild(root);
 };
