@@ -1,9 +1,11 @@
 import $ from '@implode-nz/html/';
-import icon from './epp.svg';
 
 export default (epp, theme) => {
     import('./index.styl');
-    const root = $.div([]);
-    root.innerHTML = icon;
-    theme.root = root;
+    const splitElements = 'Editor++'
+        .split('')
+        .flatMap((e) => [$.span([]), e])
+        .slice(1);
+    const root = $.div('container', splitElements);
+    document.body.appendChild(root);
 };

@@ -17,6 +17,7 @@ let injectionFinished = false;
 
 function injectMain(src) {
     epp.theme.init(epp, epp.theme);
+    import('./epp.svg').then((svg) => document.querySelectorAll('.icon').forEach((x) => (x.innerHTML = svg)));
     for (const x of injectors) x(epp, epp.theme);
     let source = src;
 
