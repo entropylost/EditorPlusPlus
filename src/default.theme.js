@@ -5,7 +5,7 @@ export default (epp, theme) => {
     const splitElements = 'Editor++'.split('').flatMap((e) => [$.span([]), e]);
     const titleInterior = $.div('title-interior', splitElements);
     const title = $.div('title', [$.div.icon('icon', []), titleInterior]);
-    //const interior = $.div('interior', []);
-    const root = $.div('container', [title /*, interior*/]);
+    const interior = $.div('interior', []);
+    const root = $.div('container', [title, interior]);
     document.body.appendChild(root);
 };
