@@ -16,7 +16,7 @@ let bundleAliases = [bundleName];
 let injectionFinished = false;
 
 function injectMain(src) {
-    epp.theme.init(epp);
+    epp.theme.init(epp, epp.theme);
     for (const x of injectors) x(epp, epp.theme);
     let source = src;
 

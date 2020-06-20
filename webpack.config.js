@@ -12,6 +12,7 @@ module.exports = {
                 test: /\.styl$/,
                 use: ['style-loader', 'css-loader', 'stylus-loader'],
             },
+            { test: /\.svg$/, loader: 'svg-inline-loader' },
         ],
     },
     mode: 'production',

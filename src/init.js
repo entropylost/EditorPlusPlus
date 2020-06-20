@@ -1,5 +1,3 @@
-import $ from '@implode-nz/html/';
-
 export default (epp) => {
     setTimeout(() => {
         const c = 'font-size: large;';
@@ -28,5 +26,4 @@ export default (epp) => {
             ...cls
         );
     }, 3000);
-    epp.$ = $;
 };
