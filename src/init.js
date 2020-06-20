@@ -1,5 +1,7 @@
-export default () => {
-    {
+import $ from '@implode-nz/html/';
+
+export default (epp) => {
+    setTimeout(() => {
         const c = 'font-size: large;';
         const c1 = c + 'background-color: #282c34; color: white;';
         const c2 = c + 'background-color: black; color: #DDD;';
@@ -25,5 +27,6 @@ export default () => {
             c1,
             ...cls
         );
-    }
+    }, 3000);
+    epp.$ = $;
 };

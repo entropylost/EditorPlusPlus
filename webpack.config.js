@@ -1,5 +1,5 @@
 const path = require('path');
-
+const webpack = require('webpack');
 module.exports = {
     entry: './src/index.js',
     output: {
@@ -14,6 +14,12 @@ module.exports = {
             },
         ],
     },
-    mode: 'development',
+    mode: 'production',
     devtool: 'source-map',
+    performance: { hints: false },
+    plugins: [
+        new webpack.optimize.LimitChunkCountPlugin({
+            maxChunks: 1,
+        }),
+    ],
 };

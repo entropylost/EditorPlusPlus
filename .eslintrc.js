@@ -1,11 +1,6 @@
 module.exports = {
     root: true,
-    extends: [
-        'eslint:recommended',
-        'plugin:prettier/recommended',
-        'plugin:import/warnings',
-        'plugin:json/recommended',
-    ],
+    extends: ['eslint:recommended', 'plugin:prettier/recommended', 'plugin:import/warnings', 'plugin:json/recommended'],
     rules: {
         'no-constant-condition': ['error', { checkLoops: false }],
     },

@@ -1,16 +1,23 @@
-import './index.styl';
 import { js as jsb } from 'js-beautify/';
 import core from './core';
 import config from './config.json';
+import defaultTheme from './default.theme';
 
 const { bundleName, bundleFunctionAliases, alphaLocation } = config;
+
+const epp = {
+    theme: {
+        init: defaultTheme,
+    },
+};
 
 let bundleAliases = [bundleName];
 
 let injectionFinished = false;
 
 function injectMain(src) {
-    for (const x of injectors) x(plugins);
+    epp.theme.init(epp);
+    for (const x of injectors) x(epp, epp.theme);
     let source = src;
 
     function replace(str, func) {
@@ -34,10 +41,7 @@ function injectMain(src) {
         return ne;
     })(Object.assign({}, config.pairings));
 
-    const bundleAliasMatcher = new RegExp(
-        'var (\\w+) = ' + bundleName + ';',
-        'g'
-    );
+    const bundleAliasMatcher = new RegExp('var (\\w+) = ' + bundleName + ';', 'g');
 
     const aliasMatches = [...src.matchAll(bundleAliasMatcher)];
 
@@ -69,7 +73,7 @@ const injectors = [];
 
 const plugins = Object.create(null);
 
-window.plugins = plugins;
+epp.plugins = plugins;
 
 const matchers = [];
 const delayed = [];
@@ -154,10 +158,7 @@ function injector(name, f, dependencies = [], extra = []) {
                             nameMatch[capIndex] = v.name;
                             isWithinMatch = true;
                         } else if (v.type === 'matchEnd') {
-                            if (!isWithinMatch)
-                                throw new Error(
-                                    'Can not use matchEnd without first using matchStart'
-                                );
+                            if (!isWithinMatch) throw new Error('Can not use matchEnd without first using matchStart');
                             capIndex++;
                             str += ')(';
                             isWithinMatch = false;
@@ -171,12 +172,11 @@ function injector(name, f, dependencies = [], extra = []) {
             str += ')';
             return replace(str, (_, ...args) => {
                 const matches = Object.create(null);
-                for (let i = 0; i < args.length - 2; i++)
-                    if (nameMatch[i] != null) matches[nameMatch[i]] = args[i];
-                let res = '';
-                for (let i = 0; i < args.length - 2; i++) {
-                    res += args[i];
+                for (let i = 0; i < args.length - 2; i++) if (nameMatch[i] != null) matches[nameMatch[i]] = args[i];
+                let res = args[0];
+                for (let i = 1; i < args.length - 2; i++) {
                     if (entries[i] != null) res += entries[i](matches);
+                    res += args[i];
                 }
                 return res;
             });
@@ -194,7 +194,9 @@ function injector(name, f, dependencies = [], extra = []) {
 
 core(injector);
 
-window.injector = injector;
+epp.injector = injector;
+
+window.epp = epp;
 
 function inject() {
     fetch(alphaLocation)
@@ -202,4 +204,4 @@ function inject() {
         .then((alpha) => injectMain(jsb(alpha)));
 }
 
-window.inject = inject;
+inject();
