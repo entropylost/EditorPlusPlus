@@ -31,7 +31,7 @@
     user-select: none
     cursor: pointer
 
-    &:hover
+    &:hover, &.activated
         width: 7em
         color: #212121
         background-color: #FFF
@@ -42,6 +42,8 @@
             fill: #212121
         & > #icon
             left: -1.5em
+    &:active
+        filter: brightness(85%)
 
 #title-interior
     position: absolute
