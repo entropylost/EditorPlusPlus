@@ -16,5 +16,6 @@ export default (epp, theme) => {
     );
     const interior = $.div('interior', []);
     const root = $.div('container', [title, interior]);
-    document.body.appendChild(root);
+    const shadow = $.div('container-shadow', root);
+    document.body.appendChild(shadow);
 };
