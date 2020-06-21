@@ -1,4 +1,4 @@
-export default (epp) => {
+function initialize() {
     setTimeout(() => {
         const c = 'font-size: large;';
         const c1 = c + 'background-color: #282c34; color: white;';
@@ -26,4 +26,12 @@ export default (epp) => {
             ...cls
         );
     }, 3000);
-};
+}
+
+export default (epp) =>
+    epp.plugin({
+        name: 'init',
+        description: 'Another part of the core, do not deactivate.',
+        dependencies: ['core'],
+        init: initialize,
+    });

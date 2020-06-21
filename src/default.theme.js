@@ -1,6 +1,5 @@
-import $ from '@implode-nz/html/';
-
-export default (epp, theme) => {
+function activate(epp) {
+    const { $ } = epp;
     import('./index.styl');
     import('./epp.svg').then((svg) => document.querySelectorAll('.icon').forEach((x) => (x.innerHTML = svg.default)));
     const splitElements = 'Editor++'.split('').flatMap((e) => [$.span([]), e]);
@@ -20,4 +19,20 @@ export default (epp, theme) => {
     const container = $.div('container', [title, interior]);
     const shadow = $.div('container-shadow', container);
     document.body.appendChild(shadow);
-};
+}
+
+export default (epp) =>
+    epp.plugin({
+        name: 'default-theme',
+        description: 'The default theme.',
+        dependencies: [],
+        init: () => {
+            epp.themes.push({
+                name: 'default-theme',
+                activate: () => activate(epp),
+                deactivate: () => {
+                    throw new Error('Can not deactivate default theme.');
+                },
+            });
+        },
+    });

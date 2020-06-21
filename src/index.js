@@ -1,23 +1,53 @@
 import { js as jsb } from 'js-beautify/';
-import core from './core';
 import config from './config.json';
-import defaultTheme from './default.theme';
+
+import $ from '@implode-nz/html/';
 
 const { bundleName, bundleFunctionAliases, alphaLocation } = config;
 
-const epp = {
-    theme: {
-        init: defaultTheme,
-    },
-};
+const epp = {};
+epp.$ = $;
 
 let bundleAliases = [bundleName];
 
-let injectionFinished = false;
+let loadingFinished = false;
 
-function injectMain(src) {
-    epp.theme.init(epp, epp.theme);
-    for (const x of injectors) x(epp, epp.theme);
+function refreshUI() {}
+
+async function initializeTheme() {
+    if (epp.theme != null) epp.theme.deactivate();
+    const id = await getStorage('theme');
+    let theme = epp.themes.find((x) => x.name === id);
+    theme = theme == null ? epp.themes[0] : theme;
+    epp.theme = {
+        name: theme.name,
+        activate: theme.activate,
+        deactivate: theme.deactivate,
+    };
+    epp.theme.activate();
+    refreshUI();
+}
+
+function getStorage(x) {
+    return Promise.resolve(config[x]);
+}
+
+function refresh() {
+    // Requests refresh of page.
+    epp.theme.info('Please refresh the page for Editor++ to update.');
+    return false;
+}
+
+async function injectMain(src) {
+    await initializeTheme();
+    for (let x in plugins) {
+        const plugin = plugins[x];
+        if (plugin.type === 'runtime') {
+            if ((await activatedPlugins)[plugin.name]) {
+                plugin.activate();
+            }
+        }
+    }
     let source = src;
 
     function replace(str, func) {
@@ -66,14 +96,13 @@ function injectMain(src) {
     const s = document.createElement('script');
     s.text = source;
     (document.head || document.documentElement).appendChild(s);
-    injectionFinished = true;
+    loadingFinished = true;
 }
-
-const injectors = [];
 
 const plugins = Object.create(null);
 
 epp.plugins = plugins;
+epp.themes = [];
 
 const matchers = [];
 const delayed = [];
@@ -82,30 +111,90 @@ function escape(string) {
     return string.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
-function injector(name, f, dependencies = [], extra = []) {
-    if (dependencies.length !== 0) {
-        let isActivated = false;
-        delayed.push(() => {
-            if (isActivated) return;
-            for (const x of dependencies) {
-                if (plugins[x] == null) return;
-            }
-            isActivated = true;
-            injector(
-                name,
-                f,
-                [],
-                dependencies.map((x) => plugins[x])
-            );
-        });
-    }
-    if (injectionFinished) throw new Error('Injection has already finished.');
+const activatedPlugins = getStorage('activatedPlugins');
+
+async function plugin(data) {
+    if (loadingFinished) throw new Error('Editor++ has finished loading already.');
+
+    // Use this piece of code:
+
+    // to make sure that the plugins are schedued correctly if they are init plugins. If they aren't init plugins then I think it should force-activate the dependencies.
+
     const plugin = {
-        name: name,
-        main: f,
-        locations: Object.create(null),
+        name: data.name,
+        description: data.description || 'NO DESCRIPTION',
+        dependencies: data.dependencies || [],
+        activate: refresh,
+        deactivate: refresh,
+        activated: false,
     };
     plugins[name] = plugin;
+
+    function activateDependencies(plugin) {
+        for (let x of plugin.dependencies) {
+            if (plugins[x] == null)
+                epp.theme.error(`Can not activate ${plugin.name}, this installation is missing ${x}.`);
+            if (plugins[x].type === 'compile' && !plugins[x].activated)
+                epp.theme.error(`Can not activate ${plugin.name} as ${x} is not activated`);
+            plugins[x].activate();
+            activateDependencies(plugins[x]);
+        }
+    }
+
+    function deactivateDependents(plugin) {
+        for (let x in plugins) {
+            if (plugins[x].dependencies.includes(plugin.name)) {
+                plugins[x].deactivate();
+                deactivateDependents(plugins[x]);
+            }
+        }
+    }
+
+    if (data.allowReloading) {
+        plugin.type = 'runtime';
+
+        plugin.activate = (...args) => {
+            if (plugin.activated) return;
+            plugin.activated = true;
+            const dep = activateDependencies(plugin);
+            args.push(...dep);
+            data.activate(...args);
+        };
+        plugin.deactivate = (...args) => {
+            if (!plugin.activated) return;
+            plugin.activated = false;
+            deactivateDependents(plugin);
+            data.deactivate(...args);
+        };
+    } else if ((await activatedPlugins)[plugin.name]) {
+        plugin.type = 'compile';
+
+        const dependencies = plugin.dependencies;
+        if (dependencies.length !== 0) {
+            let isActivated = false;
+            delayed.push(() => {
+                if (isActivated) return;
+                for (const x of dependencies) {
+                    if (plugins[x] == null) return;
+                }
+                isActivated = true;
+                injector(
+                    name,
+                    data.init,
+                    dependencies.map((x) => plugins[x])
+                );
+            });
+            delayed.forEach((x) => x());
+        }
+        injector(plugin, data.init);
+    }
+    delayed.forEach((x) => x());
+}
+
+function injector(plugin, f, extra = []) {
+    if (plugin.activated) return;
+    plugin.activated = true;
+    plugin.locations = Object.create(null);
     function entry(name) {
         const computed = [];
         plugin.locations[name] = (x) => {
@@ -129,7 +218,7 @@ function injector(name, f, dependencies = [], extra = []) {
             data: text,
         };
     }
-    function add(escape, strings, ...values) {
+    function defineLocation(escape, strings, ...values) {
         matchers.push((matchStr, replace) => {
             let capIndex = 0;
             let str = '(' + escape(strings.raw[0]);
@@ -182,19 +271,13 @@ function injector(name, f, dependencies = [], extra = []) {
             });
         });
     }
-    const addString = (strings, ...values) => add(escape, strings, ...values);
-    const addRegex = (strings, ...values) => add((x) => x, strings, ...values);
-    addString.re = addRegex;
-    f(plugin, ...extra, addString, entry, matchStart, matchEnd, regex);
-    delayed.forEach((x) => x());
-    return (f) => {
-        injectors.push(f);
-    };
+    const defineLocationString = (strings, ...values) => defineLocation(escape, strings, ...values);
+    const defineLocationRegex = (strings, ...values) => defineLocation((x) => x, strings, ...values);
+    defineLocationString.re = defineLocationRegex;
+    f(plugin, ...extra, defineLocationString, entry, matchStart, matchEnd, regex);
 }
 
-core(injector);
-
-epp.injector = injector;
+epp.plugin = plugin;
 
 window.epp = epp;
 
@@ -205,3 +288,11 @@ function inject() {
 }
 
 inject();
+
+import core from './core';
+import defaultTheme from './default.theme';
+import init from './init';
+
+core(epp);
+init(epp);
+defaultTheme(epp);
