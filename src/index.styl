@@ -1,25 +1,41 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap')
 
 buttonTime = 0.5s
+tsSize = 3.2rem
+extendedSize = 14rem
 primary = #FFF
 secondary = #111
+
+truncate(width, height, size)
+    clip-path: polygon(0% 0%, "calc(%s - %s)" % (width size) 0%, width size, width "calc(%s - %s)" % (height size), "calc(%s - %s)" % (width size) height, 0% height)
 
 #container
     position: fixed
     left: 0em
     top: 20vh
+    truncate(100%, tsSize, 0.4rem)
+    transition: width buttonTime, clip-path buttonTime
 
-    background: secondary
-    color: primary
-
-    clip-path: polygon(0% 0%, calc(100% - 0.4em) 0%, 100% 0.4em, 100% calc(100% - 0.4em), calc(100% - 0.4em) 100%, 0% 100%)
-    transition: width buttonTime, height buttonTime
-
-    white-space: nowrap
     overflow: hidden
 
     display: inline-block
     font-family: 'Source Sans Pro', Arial, sans-serif
+    font-size: 1rem
+
+    &.activated
+        truncate(100%, 100%, 0.4rem)
+// Use clip-path as a hack instead of using height: auto because it can be animated.
+// This does effectively the same thing but doesn't trigger a reflow.
+
+#interior
+    color: primary
+    background: secondary
+    width: tsSize
+    display: inline-block
+    transition: width buttonTime
+
+    #title:hover + &, #container.activated > &
+        width: extendedSize
 
 #container-shadow
     filter: drop-shadow(3px 3px 2px #0004) drop-shadow(0px 0px 5px #0002)
@@ -31,21 +47,25 @@ secondary = #111
     display: inline-block
 
 #title
-    position: relative
-    width: 1.5em
-    height: 1.5em
+    position: relative // To allow for vertically centered text in title-interior
+    width: tsSize
+    height: "calc(%s + 1px)" % tsSize // Add 1px to avoid seeing the line between #title and #interior.
     box-sizing: border-box
     padding-left: 0.5em
     padding-right: 0.5em
-    font-size: 2rem
+    font-size: 2em
+    color: primary
+    background-color: secondary
 
-    transition: color buttonTime, background buttonTime, width buttonTime, height buttonTime
+    white-space: nowrap
+
+    transition: color buttonTime, background buttonTime, width buttonTime
 
     user-select: none
     cursor: pointer
 
-    &:hover, &.activated
-        width: 7em
+    &:hover, #container.activated > &
+        width: extendedSize
         color: secondary
         background: primary
 
@@ -60,9 +80,9 @@ secondary = #111
 
 #title-interior
     position: absolute
-    top: 50%
-    transform: translateY(-50%)
-    font-size: 1.5em
+    top: 50% // Vertically centered text.
+    transform: translateY(calc((-100% - 1px) / 2)) // Add 1px due to adjustment in #title
+    font-size: tsSize
 
     & > span
         width: 3em
@@ -73,7 +93,7 @@ secondary = #111
     width: 1.5em
     height: 1.5em
     position: absolute
-    transform: translateY(-50%)
+    transform: translateY(calc((-100% - 1px) / 2)) // See above. ^
     top: 50%
     left: -0.05em
 
