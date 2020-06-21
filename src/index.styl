@@ -1,15 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap')
 
+buttonTime = 0.5s
+primary = #FFF
+secondary = #111
+
 #container
     position: fixed
     left: 0em
     top: 20vh
 
-    background-color: #212121
-    color: #FFF
+    background: secondary
+    color: primary
 
     clip-path: polygon(0% 0%, calc(100% - 0.4em) 0%, 100% 0.4em, 100% calc(100% - 0.4em), calc(100% - 0.4em) 100%, 0% 100%)
-    transition: width 0.5s, height 0.5s
+    transition: width buttonTime, height buttonTime
 
     white-space: nowrap
     overflow: hidden
@@ -24,22 +28,22 @@
     box-sizing: border-box
     padding-left: 0.5em
     padding-right: 0.5em
-    font-size: 2em
+    font-size: 2rem
 
-    transition: color 0.5s, background-color 0.5s, width 0.5s, height 0.5s
+    transition: color buttonTime, background buttonTime, width buttonTime, height buttonTime
 
     user-select: none
     cursor: pointer
 
     &:hover, &.activated
         width: 7em
-        color: #212121
-        background-color: #FFF
+        color: secondary
+        background: primary
 
         & span
             width: 0em
         & svg
-            fill: #212121
+            fill: secondary
         & > #icon
             left: -1.5em
     &:active
@@ -53,7 +57,7 @@
 
     & > span
         width: 3em
-        transition: width 0.5s
+        transition: width buttonTime
         display: inline-block
 
 #icon
@@ -64,7 +68,8 @@
     top: 50%
     left: -0.05em
 
-    transition: left 0.3s
+    transition: left buttonTime
 
     & > svg
-        fill: white
+        transition: fill buttonTime
+        fill: primary
