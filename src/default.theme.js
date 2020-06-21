@@ -21,6 +21,11 @@ function activate(epp) {
     document.body.appendChild(shadow);
 }
 
+function deactivate() {
+    document.querySelectorAll('.insertStyle').forEach((x) => x.remove());
+    document.getElementById('container-shadow').remove();
+}
+
 export default (epp) =>
     epp.plugin({
         name: 'default-theme',
@@ -30,9 +35,7 @@ export default (epp) =>
             epp.themes.push({
                 name: 'default-theme',
                 activate: () => activate(epp),
-                deactivate: () => {
-                    throw new Error('Can not deactivate default theme.');
-                },
+                deactivate,
             });
         },
     });

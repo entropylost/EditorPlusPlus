@@ -12,7 +12,11 @@ module.exports = {
         rules: [
             {
                 test: /\.styl$/,
-                use: ['style-loader', 'css-loader', 'stylus-loader'],
+                use: [
+                    { loader: 'style-loader', options: { attributes: { class: 'insertStyle' } } },
+                    'css-loader',
+                    'stylus-loader',
+                ],
             },
             { test: /\.svg$/, loader: 'svg-inline-loader' },
         ],

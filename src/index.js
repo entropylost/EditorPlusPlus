@@ -128,7 +128,7 @@ async function plugin(data) {
         deactivate: refresh,
         activated: false,
     };
-    plugins[name] = plugin;
+    plugins[data.name] = plugin;
 
     function activateDependencies(plugin) {
         for (let x of plugin.dependencies) {
@@ -179,7 +179,7 @@ async function plugin(data) {
                 }
                 isActivated = true;
                 injector(
-                    name,
+                    plugin,
                     data.init,
                     dependencies.map((x) => plugins[x])
                 );

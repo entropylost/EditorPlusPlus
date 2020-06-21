@@ -3,7 +3,7 @@
 buttonTime = 0.5s
 openTime = 0.5s
 tsSize = 3.2rem
-extendedSize = 14rem
+extendedSize = 16rem
 primary = #FFF
 secondary = #111
 
@@ -60,7 +60,7 @@ truncate(width, height, size)
 
     white-space: nowrap
 
-    transition: color buttonTime, background buttonTime, width buttonTime
+    transition: color buttonTime, background buttonTime, width buttonTime, padding-left buttonTime, padding-right buttonTime
 
     user-select: none
     cursor: pointer
@@ -69,6 +69,8 @@ truncate(width, height, size)
         width: extendedSize
         color: secondary
         background: primary
+        padding-left: 1em
+        padding-right: 1em
 
         & span
             width: 0em
@@ -82,7 +84,7 @@ truncate(width, height, size)
 #title-interior
     position: absolute
     top: 50% // Vertically centered text.
-    transform: translateY(calc((-100% - 1px) / 2)) // Add 1px due to adjustment in #title
+    transform: translate(0%, calc((-100% - 1px) / 2)) // Add 1px due to adjustment in #title
     font-size: tsSize
 
     & > span
