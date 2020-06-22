@@ -34,6 +34,8 @@ truncate(width, height, size)
     width: tsSize
     display: inline-block
     transition: width buttonTime
+    box-sizing: border-box
+    padding: 0em
 
     #title:hover + &, #container.activated > &
         width: extendedSize
@@ -56,7 +58,7 @@ truncate(width, height, size)
     padding-right: 0.5em
     font-size: 2em
     color: primary
-    background-color: secondary
+    background: secondary
 
     white-space: nowrap
 
@@ -105,3 +107,64 @@ truncate(width, height, size)
     & > svg
         transition: fill buttonTime
         fill: primary
+
+.radio-container
+    radioPadding = 0.2em
+    font-size: 1.5em
+    display: block
+    position: relative
+
+    &::before
+        z-index: 1
+        position: absolute
+        content: ''
+        transition: top 0.5s
+        transform: translate(calc(1px - 50%), -50%)
+        width: 0.25em
+        height: 0.25em
+        border-radius: 0.25em
+        display: inline-block
+        background: primary
+        margin-left: 0.3em
+        margin-top: radioPadding + 0.5em
+        top: "calc(var(--index) * (%s * 2 + 1em))" % radioPadding
+
+    &::after
+        z-index: 1
+        position: absolute
+        content: ''
+        transition: top 0.5s
+        height: 1em
+        padding: radioPadding
+        display: inline-block
+        width: 100%
+        margin-left: 0.7em
+        background: #FFF3
+        top: "calc(var(--index) * (%s * 2 + 1em))" % radioPadding
+
+    .hidden-radio
+        visibility: hidden
+        position: fixed
+        left: -99999px
+        top: -99999px
+
+    .radio-label
+        display: block
+        padding: radioPadding 1em
+        height: 1em
+
+    .radio-label::before
+        content: ''
+        margin: 0em -0.7em
+        display: inline-block
+        position: absolute
+        border: 1px solid #555
+        height: 2 * radioPadding + 1em
+        transform: "translateY(-%s)" % radioPadding
+
+    .radio-label:nth-child(2)::before // nth-child(2) due to inputs.
+        height: radioPadding + 0.5em
+        margin: (0.5em + radioPadding) -0.7em 0em
+    .radio-label:last-child::before
+        height: radioPadding + 0.5em
+        margin: 0em -0.7em (0.5em + radioPadding)

@@ -1,5 +1,5 @@
 function activate(epp) {
-    const { $ } = epp;
+    const { $, theme } = epp;
     import('./index.styl');
     import('./epp.svg').then((svg) => document.querySelectorAll('.icon').forEach((x) => (x.innerHTML = svg.default)));
     const splitElements = 'Editor++'.split('').flatMap((e) => [$.span([]), e]);
@@ -19,6 +19,44 @@ function activate(epp) {
     const container = $.div('container', [title, interior]);
     const shadow = $.div('container-shadow', container);
     document.body.appendChild(shadow);
+
+    theme.radio = (arr, change, activated = 0) => {
+        const group = `${Math.random()}`;
+
+        const elements = arr.flatMap((x, i) => {
+            const input = $.input['hidden-radio'](
+                {
+                    type: 'radio',
+                    value: x,
+                    id: `${group}-${x}`,
+                    name: group,
+                    onchange: () => {
+                        const index = elements.findIndex((x) => x.checked) / 2;
+                        container.style.setProperty('--index', index);
+                        change(index);
+                    },
+                },
+                []
+            );
+
+            if (i === activated) input.checked = true;
+
+            const label = $.label['radio-label']({ htmlFor: `${group}-${x}` }, [x]);
+
+            label.style.cssText = `--index: ${i}`;
+
+            return [input, label];
+        });
+
+
+        const container = $.div['radio-container'](elements);
+
+        container.style.setProperty('--index', activated);
+
+        return container;
+    };
+
+    interior.appendChild(theme.radio(['foo', 'bar', 'baz'], console.log));
 }
 
 function deactivate() {

@@ -14,11 +14,13 @@ let loadingFinished = false;
 
 function refreshUI() {}
 
-async function initializeTheme() {
-    if (epp.theme != null) epp.theme.deactivate();
+async function initializeTheme(quickInit = false, forceInit = false) {
+    if (quickInit && epp.theme != null) return;
     const id = await getStorage('theme');
     let theme = epp.themes.find((x) => x.name === id);
-    theme = theme == null ? epp.themes[0] : theme;
+    if ((!quickInit || forceInit) && theme == null) theme = epp.themes[0];
+    if (theme == null) return;
+    if (epp.theme != null) epp.theme.deactivate();
     epp.theme = {
         name: theme.name,
         activate: theme.activate,
@@ -39,7 +41,7 @@ function refresh() {
 }
 
 async function injectMain(src) {
-    await initializeTheme();
+    await initializeTheme(true);
     for (let x in plugins) {
         const plugin = plugins[x];
         if (plugin.type === 'runtime') {
@@ -187,6 +189,7 @@ async function plugin(data) {
             delayed.forEach((x) => x());
         }
         injector(plugin, data.init);
+        await initializeTheme(true);
     }
     delayed.forEach((x) => x());
 }
