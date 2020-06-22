@@ -7,14 +7,17 @@ extendedSize = 16rem
 primary = #FFF
 secondary = #111
 
-truncate(width, height, size)
+truncate-right(width, height, size)
     clip-path: polygon(0% 0%, "calc(%s - %s)" % (width size) 0%, width size, width "calc(%s - %s)" % (height size), "calc(%s - %s)" % (width size) height, 0% height)
+
+truncate-left(width, height, size)
+    clip-path: polygon(size 0%, width 0%, width height, size height, 0% "calc(%s - %s)" % (height size), 0% size)
 
 #container
     position: fixed
     left: 0em
     top: 20vh
-    truncate(100%, tsSize, 0.4rem)
+    truncate-right(100%, tsSize, 0.4rem)
     transition: width buttonTime, clip-path openTime
 
     overflow: hidden
@@ -24,7 +27,7 @@ truncate(width, height, size)
     font-size: 1rem
 
     &.activated
-        truncate(100%, 100%, 0.4rem)
+        truncate-right(100%, 100%, 0.4rem)
 // Use clip-path as a hack instead of using height: auto because it can be animated.
 // This does effectively the same thing but doesn't trigger a reflow.
 
@@ -141,6 +144,7 @@ truncate(width, height, size)
         margin-left: 0.7em
         background: #FFF3
         top: "calc(var(--index) * (%s * 2 + 1em))" % radioPadding
+        truncate-left(100%, 100%, 0.4rem)
 
     .hidden-radio
         visibility: hidden
