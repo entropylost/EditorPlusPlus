@@ -53,10 +53,31 @@ function activate(epp) {
         return container;
     };
 
-    theme.page = (name, ...elements) => {
+    theme.error = (e) => {
+        throw new Error(e);
+    };
+
+    let rootPage = null;
+    let currentPage = () => rootPage;
+    let pages = [];
+
+    theme.page = (name, elements, root = false) => {
+        if (root) rootPage = page;
+
         const back = $.div['back-button'](
             {
-                onclick() {},
+                onclick() {
+                    if (currentPage() !== page) return theme.error('The current page is not this page.');
+                    if (pages.length === 0) {
+                        if (!root) return theme.error('Non-root page with no previous page.');
+                        container.classList.remove('activated');
+                    } else {
+                        const old = pages.pop();
+                        page.classList.add('page-animate-out');
+                        old.classList.add('page-animate-in');
+                        currentPage = () => old;
+                    }
+                },
             },
             $.div['back-arrow']
         );
