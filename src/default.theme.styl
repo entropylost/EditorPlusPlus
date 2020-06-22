@@ -116,6 +116,7 @@ truncate-left(width, height, size)
     font-size: 1.5em
     display: block
     position: relative
+    padding: 0.5em 0em
 
     &::before
         z-index: 1
@@ -129,7 +130,7 @@ truncate-left(width, height, size)
         display: inline-block
         background: primary
         margin-left: 0.3em
-        margin-top: radioPadding + 0.5em
+        margin-top: radioPadding + 1em
         top: "calc(var(--index) * (%s * 2 + 1em))" % radioPadding
 
     &::after
@@ -143,6 +144,7 @@ truncate-left(width, height, size)
         width: 100%
         margin-left: 0.7em
         background: #FFF3
+        margin-top: 0.5em
         top: "calc(var(--index) * (%s * 2 + 1em))" % radioPadding
         truncate-left(100%, 100%, 0.4rem)
 

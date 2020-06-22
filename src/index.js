@@ -2,13 +2,9 @@ import { js as jsb } from 'js-beautify/';
 import config from './config.json';
 
 import $ from '@implode-nz/html/';
-
-const { bundleName, bundleFunctionAliases, alphaLocation } = config;
-
 const epp = {};
 epp.$ = $;
 
-let bundleAliases = [bundleName];
 
 let loadingFinished = false;
 
@@ -50,6 +46,13 @@ async function injectMain(src) {
             }
         }
     }
+
+    const bundleName = await getStorage('bundleName');
+    const bundleFunctionAliases = await getStorage('bundleFunctionAliases');
+    const pairings = await getStorage('pairings');
+
+    let bundleAliases = [bundleName];
+
     let source = src;
 
     function replace(str, func) {
@@ -71,7 +74,7 @@ async function injectMain(src) {
         }
 
         return ne;
-    })(Object.assign({}, config.pairings));
+    })(Object.assign({}, pairings));
 
     const bundleAliasMatcher = new RegExp('var (\\w+) = ' + bundleName + ';', 'g');
 
@@ -284,8 +287,8 @@ epp.plugin = plugin;
 
 window.epp = epp;
 
-function inject() {
-    fetch(alphaLocation)
+async function inject() {
+    fetch(await getStorage('alphaLocation'))
         .then((res) => res.text())
         .then((alpha) => injectMain(jsb(alpha)));
 }

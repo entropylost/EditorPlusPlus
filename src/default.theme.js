@@ -1,6 +1,6 @@
 function activate(epp) {
     const { $, theme } = epp;
-    import('./index.styl');
+    import('./default.theme.styl');
     import('./epp.svg').then((svg) => document.querySelectorAll('.icon').forEach((x) => (x.innerHTML = svg.default)));
     const splitElements = 'Editor++'.split('').flatMap((e) => [$.span([]), e]);
     const titleInterior = $.div('title-interior', splitElements);
@@ -48,13 +48,16 @@ function activate(epp) {
             return [input, label];
         });
 
-
         const container = $.div['radio-container'](elements);
 
         container.style.setProperty('--index', activated);
 
         return container;
     };
+
+    theme.page = (name, ...elements) => {
+
+    }
 
     interior.appendChild(theme.radio(['foo', 'bar', 'baz'], console.log));
 }
