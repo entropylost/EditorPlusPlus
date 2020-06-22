@@ -134,6 +134,7 @@ function plugin(data) {
         activate: refresh,
         deactivate: refresh,
         display: data.display || (() => {}),
+        hidden: data.hidden || false,
         activated: false,
     };
     plugins[data.id] = plugin;
