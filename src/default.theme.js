@@ -73,7 +73,9 @@ function activate(epp) {
                         container.classList.remove('activated');
                     } else {
                         const old = pages.pop();
+                        page.classList.remove('page-animate-in');
                         page.classList.add('page-animate-out');
+                        old.classList.remove('page-animate-out');
                         old.classList.add('page-animate-in');
                         currentPage = () => old;
                     }
