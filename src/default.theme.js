@@ -14,8 +14,6 @@ function activate(epp) {
         [$.div.icon('icon', []), titleInterior]
     );
     const interior = $.div('interior', []);
-    interior.innerHTML =
-        '<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus</p>';
     const container = $.div('container', [title, interior]);
     const shadow = $.div('container-shadow', container);
     document.body.appendChild(shadow);
@@ -30,7 +28,7 @@ function activate(epp) {
                     value: x,
                     id: `${group}-${x}`,
                     name: group,
-                    onchange: () => {
+                    onchange() {
                         const index = elements.findIndex((x) => x.checked) / 2;
                         container.style.setProperty('--index', index);
                         change(index);
@@ -56,10 +54,25 @@ function activate(epp) {
     };
 
     theme.page = (name, ...elements) => {
+        const back = $.div['back-button'](
+            {
+                onclick() {},
+            },
+            $.div['back-arrow']
+        );
 
-    }
+        const pageTitle = $.div['page-title']([back, name]);
 
-    interior.appendChild(theme.radio(['foo', 'bar', 'baz'], console.log));
+        const pageInterior = $.div['page-interior'](elements);
+
+        const page = $.div.page([pageTitle, pageInterior]);
+
+        interior.appendChild(page);
+    };
+
+    theme.clear = () => (interior.innerHTML = '');
+
+    setTimeout(() => interior.appendChild(theme.radio(['foo', 'bar', 'baz'], console.log)), 2000);
 }
 
 function deactivate() {
@@ -69,12 +82,13 @@ function deactivate() {
 
 export default (epp) =>
     epp.plugin({
-        name: 'default-theme',
+        id: 'default-theme',
+        name: 'Default Theme',
         description: 'The default theme.',
         dependencies: [],
         init: () => {
             epp.themes.push({
-                name: 'default-theme',
+                id: 'default-theme',
                 activate: () => activate(epp),
                 deactivate,
             });

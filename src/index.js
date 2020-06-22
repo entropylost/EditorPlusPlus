@@ -5,20 +5,25 @@ import $ from '@implode-nz/html/';
 const epp = {};
 epp.$ = $;
 
-
 let loadingFinished = false;
 
-function refreshUI() {}
+function refreshUI() {
+    epp.theme.clear();
+    for (let x in plugins) {
+        const plugin = plugins[x];
+        if (plugin.activated) plugin.display(epp, plugin);
+    }
+}
 
-async function initializeTheme(quickInit = false, forceInit = false) {
+function initializeTheme(quickInit = false, forceInit = false) {
     if (quickInit && epp.theme != null) return;
-    const id = await getStorage('theme');
-    let theme = epp.themes.find((x) => x.name === id);
+    const id = getStorage('theme');
+    let theme = epp.themes.find((x) => x.id === id);
     if ((!quickInit || forceInit) && theme == null) theme = epp.themes[0];
     if (theme == null) return;
     if (epp.theme != null) epp.theme.deactivate();
     epp.theme = {
-        name: theme.name,
+        id: theme.id,
         activate: theme.activate,
         deactivate: theme.deactivate,
     };
@@ -27,7 +32,7 @@ async function initializeTheme(quickInit = false, forceInit = false) {
 }
 
 function getStorage(x) {
-    return Promise.resolve(config[x]);
+    return config[x];
 }
 
 function refresh() {
@@ -36,20 +41,20 @@ function refresh() {
     return false;
 }
 
-async function injectMain(src) {
-    await initializeTheme(true);
+function injectMain(src) {
+    initializeTheme(true, true);
     for (let x in plugins) {
         const plugin = plugins[x];
         if (plugin.type === 'runtime') {
-            if ((await activatedPlugins)[plugin.name]) {
+            if (activatedPlugins[plugin.id]) {
                 plugin.activate();
             }
         }
     }
 
-    const bundleName = await getStorage('bundleName');
-    const bundleFunctionAliases = await getStorage('bundleFunctionAliases');
-    const pairings = await getStorage('pairings');
+    const bundleName = getStorage('bundleName');
+    const bundleFunctionAliases = getStorage('bundleFunctionAliases');
+    const pairings = getStorage('pairings');
 
     let bundleAliases = [bundleName];
 
@@ -118,22 +123,20 @@ function escape(string) {
 
 const activatedPlugins = getStorage('activatedPlugins');
 
-async function plugin(data) {
+function plugin(data) {
     if (loadingFinished) throw new Error('Editor++ has finished loading already.');
 
-    // Use this piece of code:
-
-    // to make sure that the plugins are schedued correctly if they are init plugins. If they aren't init plugins then I think it should force-activate the dependencies.
-
     const plugin = {
+        id: data.id,
         name: data.name,
         description: data.description || 'NO DESCRIPTION',
         dependencies: data.dependencies || [],
         activate: refresh,
         deactivate: refresh,
+        display: data.display || (() => {}),
         activated: false,
     };
-    plugins[data.name] = plugin;
+    plugins[data.id] = plugin;
 
     function activateDependencies(plugin) {
         for (let x of plugin.dependencies) {
@@ -148,7 +151,7 @@ async function plugin(data) {
 
     function deactivateDependents(plugin) {
         for (let x in plugins) {
-            if (plugins[x].dependencies.includes(plugin.name)) {
+            if (plugins[x].dependencies.includes(plugin.id)) {
                 plugins[x].deactivate();
                 deactivateDependents(plugins[x]);
             }
@@ -171,7 +174,7 @@ async function plugin(data) {
             deactivateDependents(plugin);
             data.deactivate(...args);
         };
-    } else if ((await activatedPlugins)[plugin.name]) {
+    } else if (activatedPlugins[plugin.id]) {
         plugin.type = 'compile';
 
         const dependencies = plugin.dependencies;
@@ -192,7 +195,7 @@ async function plugin(data) {
             delayed.forEach((x) => x());
         }
         injector(plugin, data.init);
-        await initializeTheme(true);
+        initializeTheme(true);
     }
     delayed.forEach((x) => x());
 }
@@ -281,14 +284,17 @@ function injector(plugin, f, extra = []) {
     const defineLocationRegex = (strings, ...values) => defineLocation((x) => x, strings, ...values);
     defineLocationString.re = defineLocationRegex;
     f(plugin, ...extra, defineLocationString, entry, matchStart, matchEnd, regex);
+    if (plugin.activated && epp.theme != null) {
+        plugin.display(epp, plugin);
+    }
 }
 
 epp.plugin = plugin;
 
 window.epp = epp;
 
-async function inject() {
-    fetch(await getStorage('alphaLocation'))
+function inject() {
+    fetch(getStorage('alphaLocation'))
         .then((res) => res.text())
         .then((alpha) => injectMain(jsb(alpha)));
 }
