@@ -26,7 +26,7 @@ function activate(epp) {
                 {
                     type: 'radio',
                     value: x,
-                    id: `${group}-${x}`,
+                    id: `${group}-${i}`,
                     name: group,
                     onchange() {
                         const index = elements.findIndex((x) => x.checked) / 2;
@@ -39,7 +39,7 @@ function activate(epp) {
 
             if (i === activated) input.checked = true;
 
-            const label = $.label['radio-label']({ htmlFor: `${group}-${x}` }, [x]);
+            const label = $.label['radio-label']({ htmlFor: `${group}-${i}` }, [x]);
 
             label.style.cssText = `--index: ${i}`;
 
