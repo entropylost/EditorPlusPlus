@@ -138,21 +138,6 @@ truncate(width, height, size)
         margin-top: radioPadding + 1em
         top: "calc(var(--index) * (%s * 2 + 1em))" % radioPadding
 
-    &::after
-        z-index: 1
-        position: absolute
-        content: ''
-        transition: top 0.5s
-        height: 1em
-        padding: radioPadding
-        display: inline-block
-        width: 100%
-        margin-left: 0.7em
-        background: #FFF3
-        margin-top: 0.5em
-        top: "calc(var(--index) * (%s * 2 + 1em))" % radioPadding
-        truncate-left(100%, 100%, 0.4rem)
-
     .hidden-radio
         visibility: hidden
         position: fixed
