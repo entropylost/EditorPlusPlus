@@ -32,6 +32,8 @@ truncate-left(width, height, size)
 // This does effectively the same thing but doesn't trigger a reflow.
 
 #interior
+    position: relative
+
     color: primary
     background: secondary
     width: tsSize
@@ -39,6 +41,7 @@ truncate-left(width, height, size)
     transition: width buttonTime
     box-sizing: border-box
     padding: 0em
+    font-size: 1.5em
 
     #title:hover + &, #container.activated > &
         width: extendedSize
@@ -113,7 +116,6 @@ truncate-left(width, height, size)
 
 .radio-container
     radioPadding = 0.2em
-    font-size: 1.5em
     display: block
     position: relative
     padding: 0.5em 0em
@@ -176,13 +178,38 @@ truncate-left(width, height, size)
     .radio-label:last-child::before
         height: radioPadding + 0.5em
         margin: 0em -0.7em (0.5em + radioPadding)
-/*
-.page
-    .page-title
 
+.page
+    //visibility: hidden
+
+    .back-button
+        position: absolute
+        display: inline-block
+        width: 1.2em
+        height: 1.2em
+        top: 50%
+        left: 2%
+        transform: translateY(-50%)
+
+        .back-arrow
+            position: absolute
+            background: primary
+            top: 0%
+            left: 0%
+            width: 100%
+            height: 100%
+            display: inline-block
+            clip-path: polygon(60% 10%, 20% 50%, 60% 90%, 70% 80%, 40% 50%, 70% 20%)
+        &:hover
+            background: #666
+    .page-title
+        font-weight: bold
+        text-align: center
+        padding: 0.2em
+        user-select: none
     .page-interior
 
-    .page-animate-out
-
-    .page-animate-in
-*/
+    .page-out
+        animation: 0.3s linear both running page-animate-out
+    .page-in
+        animation: 0.3s linear both running page-animate-in

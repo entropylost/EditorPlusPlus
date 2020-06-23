@@ -62,8 +62,6 @@ function activate(epp) {
     let pages = [];
 
     theme.page = (name, elements, root = false) => {
-        if (root) rootPage = page;
-
         const back = $.div['back-button'](
             {
                 onclick() {
@@ -73,15 +71,15 @@ function activate(epp) {
                         container.classList.remove('activated');
                     } else {
                         const old = pages.pop();
-                        page.classList.remove('page-animate-in');
-                        page.classList.add('page-animate-out');
-                        old.classList.remove('page-animate-out');
-                        old.classList.add('page-animate-in');
+                        page.classList.remove('page-in');
+                        page.classList.add('page-out');
+                        old.classList.remove('page-out');
+                        old.classList.add('page-in');
                         currentPage = () => old;
                     }
                 },
             },
-            $.div['back-arrow']
+            $.div['back-arrow']([])
         );
 
         const pageTitle = $.div['page-title']([back, name]);
@@ -90,12 +88,17 @@ function activate(epp) {
 
         const page = $.div.page([pageTitle, pageInterior]);
 
+        if (root) {
+            rootPage = page;
+            if (pages.length === 0) page.classList.add('page-in');
+        }
+
         interior.appendChild(page);
     };
 
     theme.clear = () => (interior.innerHTML = '');
 
-    setTimeout(() => interior.appendChild(theme.radio(['foo', 'bar', 'baz'], console.log)), 2000);
+    setTimeout(() => epp.theme.page('Foo', [], true), 2000);
 }
 
 function deactivate() {
