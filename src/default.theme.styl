@@ -180,7 +180,8 @@ truncate-left(width, height, size)
         margin: 0em -0.7em (0.5em + radioPadding)
 
 .page
-    //visibility: hidden
+    position: relative
+    visibility: hidden
 
     .back-button
         position: absolute
@@ -200,16 +201,37 @@ truncate-left(width, height, size)
             height: 100%
             display: inline-block
             clip-path: polygon(60% 10%, 20% 50%, 60% 90%, 70% 80%, 40% 50%, 70% 20%)
+            transform: scale(0.8, 0.9)
         &:hover
             background: #666
     .page-title
+        position: relative
         font-weight: bold
         text-align: center
         padding: 0.2em
         user-select: none
     .page-interior
+        padding: 0.2em
+.page-out
+    animation: 0.6s linear both running page-animate-out
+.page-in
+    animation: 0.3s linear both running page-animate-in
 
-    .page-out
-        animation: 0.3s linear both running page-animate-out
-    .page-in
-        animation: 0.3s linear both running page-animate-in
+@keyframes page-animate-in
+    0%
+        visibility: visible
+        left: -100%
+    100%
+        visibility: visible
+        left: 0%
+
+@keyframes page-animate-out
+    0%
+        visibility: visible
+        left: 0%
+    50%
+        visibility: visible
+        left: 100%
+    100%
+        visibility: hidden
+        left: 100%

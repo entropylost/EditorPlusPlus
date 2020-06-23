@@ -62,31 +62,35 @@ function activate(epp) {
     let pages = [];
 
     theme.page = (name, elements, root = false) => {
-        const back = $.div['back-button'](
-            {
-                onclick() {
-                    if (currentPage() !== page) return theme.error('The current page is not this page.');
-                    if (pages.length === 0) {
-                        if (!root) return theme.error('Non-root page with no previous page.');
-                        container.classList.remove('activated');
-                    } else {
-                        const old = pages.pop();
-                        page.classList.remove('page-in');
-                        page.classList.add('page-out');
-                        old.classList.remove('page-out');
-                        old.classList.add('page-in');
-                        currentPage = () => old;
-                    }
-                },
-            },
-            $.div['back-arrow']([])
-        );
+        let pageTitle = null;
 
-        const pageTitle = $.div['page-title']([back, name]);
+        if (name !== '') {
+            const back = $.div['back-button'](
+                {
+                    onclick() {
+                        if (currentPage() !== page) return theme.error('The current page is not this page.');
+                        if (pages.length === 0) {
+                            if (!root) return theme.error('Non-root page with no previous page.');
+                            container.classList.remove('activated');
+                        } else {
+                            const old = pages.pop();
+                            page.classList.remove('page-in');
+                            page.classList.add('page-out');
+                            old.classList.remove('page-out');
+                            old.classList.add('page-in');
+                            currentPage = () => old;
+                        }
+                    },
+                },
+                $.div['back-arrow']([])
+            );
+
+            pageTitle = $.div['page-title']([back, name]);
+        }
 
         const pageInterior = $.div['page-interior'](elements);
 
-        const page = $.div.page([pageTitle, pageInterior]);
+        const page = $.div.page(pageTitle == null ? pageInterior : [pageTitle, pageInterior]);
 
         if (root) {
             rootPage = page;
@@ -98,7 +102,7 @@ function activate(epp) {
 
     theme.clear = () => (interior.innerHTML = '');
 
-    setTimeout(() => epp.theme.page('Foo', [], true), 2000);
+    setTimeout(() => epp.theme.page('Foo', [], true), 5000);
 }
 
 function deactivate() {
