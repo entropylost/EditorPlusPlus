@@ -74,10 +74,13 @@ function activate(epp) {
                             container.classList.remove('activated');
                         } else {
                             const old = pages.pop();
-                            page.classList.remove('page-in');
-                            page.classList.add('page-out');
-                            old.classList.remove('page-out');
-                            old.classList.add('page-in');
+                            page.classList.remove('page-in-left');
+                            page.classList.remove('page-in-right');
+                            page.classList.add('page-out-right');
+
+                            old.classList.remove('page-out-left');
+                            old.classList.remove('page-out-right');
+                            old.classList.add('page-in-left');
                             currentPage = () => old;
                         }
                     },
@@ -94,15 +97,42 @@ function activate(epp) {
 
         if (root) {
             rootPage = page;
-            if (pages.length === 0) page.classList.add('page-in');
+            if (pages.length === 0) page.classList.add('page-in-left');
         }
 
         interior.appendChild(page);
+        return page;
+    };
+
+    theme.next = (name, page) => {
+        const arrow = $.div['forward-arrow']([]);
+        const button = $.div['forward-button'](
+            {
+                onclick() {
+                    const current = currentPage();
+                    pages.push(current);
+                    current.classList.remove('page-in-left');
+                    current.classList.remove('page-in-right');
+                    current.classList.add('page-out-left');
+
+                    page.classList.remove('page-out-left');
+                    page.classList.remove('page-out-right');
+                    page.classList.add('page-in-right');
+                    currentPage = () => page;
+                },
+            },
+            [name, arrow]
+        );
+        return button;
     };
 
     theme.clear = () => (interior.innerHTML = '');
 
-    setTimeout(() => epp.theme.page('Foo', [], true), 5000);
+    setTimeout(() => {
+        const next = theme.next('Next', theme.page('Foo', []));
+
+        theme.page('', [next], true);
+    }, 5000);
 }
 
 function deactivate() {

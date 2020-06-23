@@ -30,6 +30,7 @@ function initialize() {
 
 export default (epp) =>
     epp.plugin({
+        id: 'init',
         name: 'init',
         description: 'Another part of the core, do not deactivate.',
         dependencies: ['core'],

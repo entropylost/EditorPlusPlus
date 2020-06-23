@@ -1,5 +1,6 @@
 export default (epp) =>
     epp.plugin({
+        id: 'core',
         name: 'core',
         description: 'The base module. Do not deactivate.',
         dependencies: [],

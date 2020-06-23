@@ -13,6 +13,9 @@ truncate-right(width, height, size)
 truncate-left(width, height, size)
     clip-path: polygon(size 0%, width 0%, width height, size height, 0% "calc(%s - %s)" % (height size), 0% size)
 
+truncate(width, height, size)
+    clip-path: polygon(size 0%, "calc(%s - %s)" % (width size) 0%, width size, width "calc(%s - %s)" % (height size), "calc(%s - %s)" % (width size) height, size height, 0% "calc(%s - %s)" % (height size), 0% size)
+
 #container
     position: fixed
     left: 0em
@@ -182,8 +185,11 @@ truncate-left(width, height, size)
 .page
     position: relative
     visibility: hidden
+    display: inline-block
+    width: 0%
 
     .back-button
+        cursor: pointer
         position: absolute
         display: inline-block
         width: 1.2em
@@ -191,10 +197,11 @@ truncate-left(width, height, size)
         top: 50%
         left: 2%
         transform: translateY(-50%)
+        transition: left 0.3s
 
         .back-arrow
             position: absolute
-            background: primary
+            background: #999
             top: 0%
             left: 0%
             width: 100%
@@ -202,36 +209,74 @@ truncate-left(width, height, size)
             display: inline-block
             clip-path: polygon(60% 10%, 20% 50%, 60% 90%, 70% 80%, 40% 50%, 70% 20%)
             transform: scale(0.8, 0.9)
+            transition: background 0.3s
         &:hover
-            background: #666
+            left: 0%
+            .back-arrow
+                background: #FFF
     .page-title
         position: relative
         font-weight: bold
         text-align: center
         padding: 0.2em
         user-select: none
+        box-sizing: border-box
+        width: extendedSize
     .page-interior
         padding: 0.2em
-.page-out
-    animation: 0.6s linear both running page-animate-out
-.page-in
-    animation: 0.3s linear both running page-animate-in
+        box-sizing: border-box
+        width: extendedSize
 
-@keyframes page-animate-in
+.page-in-left
+    animation: 0.1s ease-in-out both running page-animate-left-1
+.page-in-right
+    animation: 0.1s ease-in-out both running page-animate-right-1
+
+.page-out-left
+    animation: 0.1s ease-in-out reverse running page-animate-left-2
+.page-out-right
+    animation: 0.1s ease-in-out reverse running page-animate-right-2
+
+.forward-button
+    position: relative
+    cursor: pointer
+    user-select: none
+    .forward-arrow
+        position: absolute
+        background: #999
+        top: 50%
+        right: 2%
+        width: 1.2em
+        height: 1.2em
+        display: inline-block
+        clip-path: polygon(40% 10%, 80% 50%, 40% 90%, 30% 80%, 60% 50%, 30% 20%)
+        transform: translateY(-50%) scale(0.8, 0.9)
+        transition: background 0.3s, right 0.3s
+    &:hover
+        .forward-arrow
+            right: 0%
+            background: #FFF
+
+page-al()
     0%
         visibility: visible
         left: -100%
     100%
         visibility: visible
         left: 0%
-
-@keyframes page-animate-out
+page-ar()
     0%
-        visibility: visible
-        left: 0%
-    50%
         visibility: visible
         left: 100%
     100%
-        visibility: hidden
-        left: 100%
+        visibility: visible
+        left: 0%
+
+@keyframes page-animate-left-1
+    page-al()
+@keyframes page-animate-left-2
+    page-al()
+@keyframes page-animate-right-1
+    page-ar()
+@keyframes page-animate-right-2
+    page-ar()
