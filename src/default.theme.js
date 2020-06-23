@@ -41,8 +41,6 @@ function activate(epp) {
 
             const label = $.label['radio-label']({ htmlFor: `${group}-${i}` }, [x]);
 
-            label.style.cssText = `--index: ${i}`;
-
             return [input, label];
         });
 

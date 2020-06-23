@@ -6,6 +6,7 @@ tsSize = 3.2rem
 extendedSize = 16rem
 primary = #FFF
 secondary = #111
+dimmed = #999
 
 truncate-right(width, height, size)
     clip-path: polygon(0% 0%, "calc(%s - %s)" % (width size) 0%, width size, width "calc(%s - %s)" % (height size), "calc(%s - %s)" % (width size) height, 0% height)
@@ -150,6 +151,11 @@ truncate(width, height, size)
         cursor: pointer
         height: 1em
         user-select: none
+        color: dimmed
+        transition: color 0.5s
+
+    .hidden-radio:checked + .radio-label
+        color: primary
 
     .radio-label::before
         content: ''
@@ -187,7 +193,7 @@ truncate(width, height, size)
 
         .back-arrow
             position: absolute
-            background: #999
+            background: dimmed
             top: 0%
             left: 0%
             width: 100%
@@ -235,7 +241,7 @@ truncate(width, height, size)
     padding: 0.2em 0 0.2em 0.3em
     .forward-arrow
         position: absolute
-        background: #999
+        background: dimmed
         top: 50%
         right: 2%
         width: 1.2em
