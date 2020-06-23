@@ -89,9 +89,12 @@ function activate(epp) {
             );
 
             pageTitle = $.div['page-title']([back, name]);
+            elements.unshift(theme.seperator());
         }
 
         const pageInterior = $.div['page-interior'](elements);
+
+        if (name === '') pageInterior.classList.add('no-title');
 
         const page = $.div.page(pageTitle == null ? pageInterior : [pageTitle, pageInterior]);
 
@@ -104,8 +107,13 @@ function activate(epp) {
         return page;
     };
 
-    theme.next = (name, page) => {
+    theme.next = (name, page, image) => {
         const arrow = $.div['forward-arrow']([]);
+        let svg = '';
+        if (image != null) {
+            svg = $.div['forward-button-graphic-display']([]);
+            svg.innerHTML = image;
+        }
         const button = $.div['forward-button'](
             {
                 onclick() {
@@ -121,18 +129,21 @@ function activate(epp) {
                     currentPage = () => page;
                 },
             },
-            [name, arrow]
+            [svg, name, arrow]
         );
+        if (image != null) button.classList.add('forward-button-has-graphic');
         return button;
     };
 
+    theme.seperator = () => $.div.seperator([]);
+
     theme.clear = () => (interior.innerHTML = '');
 
-    setTimeout(() => {
-        const next = theme.next('Next', theme.page('Foo', []));
+    setTimeout(async () => {
+        const next = theme.next('Next', theme.page('Foo', []), (await import('./epp.svg')).default);
 
-        theme.page('', [next], true);
-    }, 5000);
+        theme.page('', [next, theme.radio(['Foo', 'Bar', 'Baz'], console.log)], true);
+    }, 50);
 }
 
 function deactivate() {
