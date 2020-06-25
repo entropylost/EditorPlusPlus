@@ -1,12 +1,15 @@
 const path = require('path');
 const webpack = require('webpack');
-//const CopyPlugin = require('copy-webpack-plugin');
-//const ExtensionReloader = require('webpack-extension-reloader');
+const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
-    entry: './src/index.js',
+    entry: {
+        content: './src/index.js',
+        background: './src/injector.js',
+    },
     output: {
-        filename: 'bundle.js',
+        publicPath: '.',
         path: path.resolve(__dirname, 'dist'),
+        filename: '[name].bundle.js',
     },
     module: {
         rules: [
@@ -28,9 +31,8 @@ module.exports = {
         new webpack.optimize.LimitChunkCountPlugin({
             maxChunks: 1,
         }),
-        /*
-        new CopyPlugin([{ from: './src/manifest.json'}]),
-        new ExtensionReloader({ manifest: './src/manifest.json' }),
-        */
+        new CopyPlugin({
+            patterns: [{ from: './manifest.json' }],
+        }),
     ],
 };

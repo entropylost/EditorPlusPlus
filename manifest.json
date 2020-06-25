@@ -1,0 +1,19 @@
+{
+    "manifest_version": 2,
+    "name": "Editor++",
+    "version": "1.0.0",
+
+    "description": "Adds a red border to all webpages matching mozilla.org.",
+
+    "icons": {},
+
+    "permissions": ["*://bonk2.io/beta/*", "webRequest", "webRequestBlocking"],
+
+    "web_accessible_resources": [
+      "content.bundle.js"
+    ],
+
+    "background": {
+        "scripts": ["./background.bundle.js"]
+    }
+}

@@ -1,7 +1,7 @@
 {
     "bundleName": "q499",
     "bundleFunctionAliases": ["d8O", "o8O"],
-    "alphaLocation": "https://bonk2.io/beta/alpha-old.js",
+    "alphaLocation": "https://bonk2.io/beta/js/alpha2s.js?eppEntry",
     "theme": "default-theme",
     "activatedPlugins": {
         "core": true,
