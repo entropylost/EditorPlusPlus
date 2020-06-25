@@ -18,48 +18,17 @@ function activate(epp) {
     const shadow = $.div('container-shadow', container);
     document.body.appendChild(shadow);
 
-    theme.radio = (arr, change, activated = 0) => {
-        const group = `${Math.random()}`;
-
-        const elements = arr.flatMap((x, i) => {
-            const input = $.input['hidden-radio'](
-                {
-                    type: 'radio',
-                    value: x,
-                    id: `${group}-${i}`,
-                    name: group,
-                    onchange() {
-                        const index = elements.findIndex((x) => x.checked) / 2;
-                        container.style.setProperty('--index', index);
-                        change(index);
-                    },
-                },
-                []
-            );
-
-            if (i === activated) input.checked = true;
-
-            const label = $.label['radio-label']({ htmlFor: `${group}-${i}` }, [x]);
-
-            return [input, label];
-        });
-
-        const container = $.div['radio-container'](elements);
-
-        container.style.setProperty('--index', activated);
-
-        return container;
-    };
-
-    theme.error = (e) => {
-        throw new Error(e);
-    };
+    // Page manipulation
 
     let rootPage = null;
     let currentPage = () => rootPage;
     let pages = [];
 
-    theme.page = (name, elements, root = false) => {
+    theme.pages = {};
+
+    theme.page = (id, name, elements) => {
+        const root = id === 'root';
+
         let pageTitle = null;
 
         if (name !== '') {
@@ -86,7 +55,7 @@ function activate(epp) {
                 $.div['back-arrow']([])
             );
 
-            pageTitle = $.div['page-title']([back, name]);
+            pageTitle = $.div['page-title'](root ? [name] : [back, name]);
             elements.unshift(theme.seperator());
         }
 
@@ -102,6 +71,18 @@ function activate(epp) {
         }
 
         interior.appendChild(page);
+
+        theme.pages[id] = {
+            append(...elems) {
+                for (const x of elems) {
+                    if (typeof x === 'string') pageInterior.appendChild(document.createTextNode(x));
+                    else pageInterior.appendChild(x);
+                }
+            },
+            name,
+            element: page,
+        };
+
         return page;
     };
 
@@ -133,15 +114,76 @@ function activate(epp) {
         return button;
     };
 
+    // Other components
+
+    theme.radio = (arr, change, activated = 0) => {
+        const group = `${Math.random()}`;
+
+        const elements = arr.flatMap((x, i) => {
+            const input = $.input.hidden(
+                {
+                    type: 'radio',
+                    value: x,
+                    id: `${group}-${i}`,
+                    name: group,
+                    onchange() {
+                        const index = elements.findIndex((x) => x.checked) / 2;
+                        container.style.setProperty('--index', index);
+                        change(index);
+                    },
+                },
+                []
+            );
+
+            if (i === activated) input.checked = true;
+
+            const label = $.label['radio-label']({ htmlFor: `${group}-${i}` }, [x]);
+
+            return [input, label];
+        });
+
+        const container = $.div['radio-container'](elements);
+
+        container.style.setProperty('--index', activated);
+
+        return container;
+    };
+
+    theme.checkbox = (name, cb, activated = false) => {
+        const id = `${Math.random()}`;
+
+        const input = $.input.hidden(
+            {
+                type: 'checkbox',
+                value: name,
+                id: id,
+                name: id,
+                onchange() {
+                    cb(input.checked);
+                },
+            },
+            []
+        );
+
+        const label = $.label['checkbox-label']({ htmlFor: id }, [name]);
+
+        if (activated) input.checked = true;
+
+        return $.div['checkbox-container']([input, label]);
+    };
+
     theme.seperator = () => $.div.seperator([]);
 
-    theme.clear = () => (interior.innerHTML = '');
+    theme.error = (e) => {
+        throw new Error(e);
+    };
 
-    setTimeout(async () => {
-        const next = theme.next('Next', theme.page('Foo', []), (await import('./epp.svg')).default);
+    theme.clear = () => {
+        interior.innerHTML = '';
+        interior.appendChild(rootPage);
+    };
 
-        theme.page('', [next, theme.radio(['Foo', 'Bar', 'Baz'], console.log)], true);
-    }, 50);
+    theme.page('root', 'Settings', []);
 }
 
 function deactivate() {
@@ -155,6 +197,7 @@ export default (epp) =>
         name: 'Default Theme',
         description: 'The default theme.',
         dependencies: [],
+        hidden: true,
         init: () => {
             epp.themes.push({
                 id: 'default-theme',

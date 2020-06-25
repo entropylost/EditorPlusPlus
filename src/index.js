@@ -284,7 +284,7 @@ function injector(plugin, f, extra = []) {
     const defineLocationString = (strings, ...values) => defineLocation(escape, strings, ...values);
     const defineLocationRegex = (strings, ...values) => defineLocation((x) => x, strings, ...values);
     defineLocationString.re = defineLocationRegex;
-    f(plugin, ...extra, defineLocationString, entry, matchStart, matchEnd, regex);
+    f(epp, plugin, ...extra, defineLocationString, entry, matchStart, matchEnd, regex);
     if (plugin.activated && epp.theme != null) {
         plugin.display(epp, plugin);
     }
@@ -304,8 +304,6 @@ inject();
 
 import core from './core';
 import defaultTheme from './default.theme';
-import init from './init';
 
 core(epp);
-init(epp);
 defaultTheme(epp);

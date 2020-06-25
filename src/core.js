@@ -1,29 +1,64 @@
+function initialize() {
+    setTimeout(() => {
+        const c = 'font-size: large;';
+        const c1 = c + 'background-color: #282c34; color: white;';
+        const c2 = c + 'background-color: black; color: #DDD;';
+        let cls = [];
+        for (let i = 0; i < 12; i++) {
+            cls = cls.concat([c2, c1]);
+        }
+        console.log(
+            String.raw`%c
+                    %c                                     %c
+  /==============   %c                                     %c
+  ||/============   %c                                     %c
+  |||     |||       %c         Editor++                    %c
+  |||     |||       %c                                     %c
+  ||\===========    %c        Made by ReversedGravity.     %c
+  ||/===========    %c                                     %c
+  |||     |||       %c        Email: rg@youxplode.com      %c
+  |||     |||       %c        Discord: iMplode-nZ#5773     %c
+  ||\============   %c                                     %c
+  \==============   %c                                     %c
+                    %c                                     %c
+`,
+            c1,
+            ...cls
+        );
+    }, 3000);
+}
+
 export default (epp) =>
     epp.plugin({
         id: 'core',
         name: 'core',
         description: 'The base module. Do not deactivate.',
         dependencies: [],
-        init: (c, $, entry, ms, me, _) => {
-            const word = _('\\w+');
-            $`${entry('#physicsIntercept')}
-            function ${word}(${word}) {
-                var ${word}, ${word}, ${word};
-                ${word} = ${ms('map')}${word}${me}[${'physics'}][${'bodies'}][${word}];`;
+        init: initialize,
+        hidden: true,
+        display(epp) {
+            const { theme } = epp;
+            const root = theme.pages.root;
 
-            c.locations['#physicsIntercept']((m) => `epp.edit = (f) => ${m.map} = f(${m.map});`);
-            $`
-                    ${word} = function(${ms('index')}${word}${me}) {
-                        var ${word}, ${word}, ${word}, ${word};
-                        ${word} = ${word}[${'insertRow'}]();
-                        ${word}[${'onclick'}] = function() {${entry('#platformclick')}
-                            ${word}(${word}[${'physics'}][${'bro'}][${word}]);
-                            ${word}.${word}();
-                            ${word}(${word});`;
-            c.locations['#platformclick'](
-                (m) => `
-if (epp.onPlatformChange != null) epp.onPlatformChange(epp.currentPlatformIndex, ${m.index});
-epp.currentPlatformIndex = ${m.index};`
-            );
+            const elements = [];
+
+            for (const x in epp.plugins) {
+                const plugin = epp.plugins[x];
+                if (plugin.hidden) continue;
+                elements.push(
+                    theme.checkbox(
+                        plugin.name,
+                        () => {
+                            if (plugin.activated) {
+                                plugin.deactivate();
+                            } else plugin.activate();
+                        },
+                        plugin.activated
+                    )
+                );
+            }
+
+            const plugins = theme.page('plugins', 'Plugins', elements);
+            root.append(theme.next('Plugins', plugins));
         },
     });

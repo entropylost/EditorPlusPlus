@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap')
 
+vendors = official
+
 buttonTime = 0.5s
 openTime = 0.5s
 tsSize = 3.2rem
@@ -118,6 +120,12 @@ truncate(width, height, size)
         transition: fill buttonTime
         fill: primary
 
+.hidden
+    visibility: hidden
+    position: fixed
+    left: -99999px
+    top: -99999px
+
 .radio-container
     radioPadding = 0.2em
     display: block
@@ -139,12 +147,6 @@ truncate(width, height, size)
         margin-top: radioPadding + 1em
         top: "calc(var(--index) * (%s * 2 + 1em))" % radioPadding
 
-    .hidden-radio
-        visibility: hidden
-        position: fixed
-        left: -99999px
-        top: -99999px
-
     .radio-label
         display: block
         padding: radioPadding 1em
@@ -154,7 +156,7 @@ truncate(width, height, size)
         color: dimmed
         transition: color 0.5s
 
-    .hidden-radio:checked + .radio-label
+    .hidden:checked + .radio-label
         color: primary
 
     .radio-label::before
@@ -234,6 +236,30 @@ truncate(width, height, size)
 .page-out-right
     animation: 0.1s ease-in-out reverse running page-animate-right-2
 
+page-al()
+    0%
+        visibility: visible
+        left: -100%
+    100%
+        visibility: visible
+        left: 0%
+page-ar()
+    0%
+        visibility: visible
+        left: 100%
+    100%
+        visibility: visible
+        left: 0%
+
+@keyframes page-animate-left-1
+    page-al()
+@keyframes page-animate-left-2
+    page-al()
+@keyframes page-animate-right-1
+    page-ar()
+@keyframes page-animate-right-2
+    page-ar()
+
 .forward-button
     position: relative
     cursor: pointer
@@ -268,26 +294,41 @@ truncate(width, height, size)
     &.forward-button-has-graphic
         padding-left: 1em
 
-page-al()
-    0%
-        visibility: visible
-        left: -100%
-    100%
-        visibility: visible
-        left: 0%
-page-ar()
-    0%
-        visibility: visible
-        left: 100%
-    100%
-        visibility: visible
-        left: 0%
+.hidden:checked
+    background: primary
 
-@keyframes page-animate-left-1
-    page-al()
-@keyframes page-animate-left-2
-    page-al()
-@keyframes page-animate-right-1
-    page-ar()
-@keyframes page-animate-right-2
-    page-ar()
+.checkbox-container
+    checkboxPadding = 0.2em
+
+    beforeDot()
+        position: absolute
+        content: ''
+        width: 0.25em
+        height: 0.25em
+        border-radius: 0.25em
+        display: inline-block
+        background: dimmed
+        left: 0.5em
+        top: 50%
+        transform: translate(-50%, -50%) scale(0.4)
+
+    .checkbox-label
+        position: relative
+        padding: checkboxPadding 1em
+        cursor: pointer
+        height: 1em
+        user-select: none
+        color: dimmed
+        transition: color 0.5s
+        display: block
+        &::before
+            beforeDot()
+            transition: transform 0.5s, background 0.5s
+            z-index: 1
+        &::after
+            beforeDot()
+    .hidden:checked ~ .checkbox-label
+        color: primary
+    .hidden:checked ~ .checkbox-label::before
+        transform: translate(-50%, -50%) scale(1)
+        background: primary
