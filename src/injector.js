@@ -1,6 +1,5 @@
 import browser from 'webextension-polyfill';
 
-console.log('Hi');
 browser.webRequest.onBeforeRequest.addListener(
     (x) => {
         if (x.url.includes('alpha') && !x.url.includes('eppEntry'))

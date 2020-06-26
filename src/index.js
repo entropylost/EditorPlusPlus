@@ -32,11 +32,11 @@ function initializeTheme(quickInit = false, forceInit = false) {
 }
 
 function getStorage(x) {
-    return JSON.parse(localStorage.getItem(x)) || (config[x] && (setStorage(x, config[x]), config[x]));
+    return JSON.parse(localStorage.getItem('epp.' + x)) || (config[x] && (setStorage(x, config[x]), config[x]));
 }
 
 function setStorage(x, value) {
-    localStorage.setItem(x, JSON.stringify(value));
+    localStorage.setItem('epp.' + x, JSON.stringify(value));
 }
 
 function refresh() {
