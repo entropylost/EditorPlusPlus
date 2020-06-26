@@ -32,7 +32,11 @@ function initializeTheme(quickInit = false, forceInit = false) {
 }
 
 function getStorage(x) {
-    return config[x];
+    return JSON.parse(localStorage.getItem(x)) || (config[x] && (setStorage(x, config[x]), config[x]));
+}
+
+function setStorage(x, value) {
+    localStorage.setItem(x, JSON.stringify(value));
 }
 
 function refresh() {
@@ -42,65 +46,130 @@ function refresh() {
 }
 
 function injectMain(src) {
-    initializeTheme(true, true);
-    for (let x in plugins) {
-        const plugin = plugins[x];
-        if (plugin.type === 'runtime') {
-            if (activatedPlugins[plugin.id]) {
-                plugin.activate();
-            }
-        }
-    }
-
-    const bundleName = getStorage('bundleName');
-    const bundleFunctionAliases = getStorage('bundleFunctionAliases');
-    const pairings = getStorage('pairings');
-
-    let bundleAliases = [bundleName];
+    let fallback = false;
 
     let source = src;
 
-    function replace(str, func) {
-        let numInstances = 0;
-        source = source.replace(new RegExp(str, 'g'), (...args) => {
-            numInstances++;
-            return func(...args);
-        });
-        if (numInstances != 1) throw new Error('Invalid regex at:\n' + str);
-    }
-
-    const inverse = ((obj) => {
-        var ne = {};
-
-        for (var prop in obj) {
-            if (Object.prototype.hasOwnProperty.call(obj, prop)) {
-                ne[obj[prop]] = prop;
-            }
+    (() => {
+        function replace(str, func) {
+            let numInstances = 0;
+            source = source.replace(new RegExp(str, 'g'), (...args) => {
+                numInstances++;
+                return func(...args);
+            });
+            if (numInstances != 1) throw new Error('Invalid regex at:\n' + str);
         }
+        try {
+            initializeTheme(true, true);
+            for (let x in plugins) {
+                const plugin = plugins[x];
+                if (plugin.type === 'runtime') {
+                    if (activatedPlugins[plugin.id]) {
+                        plugin.activate();
+                    }
+                }
+            }
 
-        return ne;
-    })(Object.assign({}, pairings));
+            const bundleName = getStorage('bundleName');
+            const bundleFunctionAliases = getStorage('bundleFunctionAliases');
+            const pairings = getStorage('pairings');
 
-    const bundleAliasMatcher = new RegExp('var (\\w+) = ' + bundleName + ';', 'g');
+            if (bundleName == null || bundleFunctionAliases == null || pairings == null) {
+                fallback = true;
+                return false;
+            }
 
-    const aliasMatches = [...src.matchAll(bundleAliasMatcher)];
+            let bundleAliases = [bundleName];
 
-    for (let x of aliasMatches) {
-        bundleAliases.push(x[1]);
-    }
+            const inverse = ((obj) => {
+                var ne = {};
 
-    const matcher = (str) =>
-        '(?:' +
-        bundleAliases.join('|') +
-        ')' +
-        '\\.(?:' +
-        bundleFunctionAliases.join('|') +
-        ')\\(' +
-        inverse[str] +
-        '\\)';
+                for (var prop in obj) {
+                    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                        ne[obj[prop]] = prop;
+                    }
+                }
 
-    for (const x of matchers) {
-        x(matcher, replace);
+                return ne;
+            })(Object.assign({}, pairings));
+
+            const bundleAliasMatcher = new RegExp('var (\\w+) = ' + bundleName + ';', 'g');
+
+            const aliasMatches = [...src.matchAll(bundleAliasMatcher)];
+
+            for (let x of aliasMatches) {
+                bundleAliases.push(x[1]);
+            }
+
+            const matcher = (str) =>
+                '(?:' +
+                bundleAliases.join('|') +
+                ')' +
+                '\\.(?:' +
+                bundleFunctionAliases.join('|') +
+                ')\\(' +
+                inverse[str] +
+                '\\)';
+
+            for (const x of matchers) {
+                x(matcher, replace);
+            }
+        } catch (e) {
+            console.log(e);
+            fallback = true;
+        }
+    })();
+
+    if (fallback) {
+        source =
+            src +
+            `
+setTimeout(window.fallback, 2000);`;
+
+        const bundleDefinitionMatcher = /(\w+)\.(\w+) = \(function\(\) \{/;
+
+        const bundleDefinitionMatch = src.match(bundleDefinitionMatcher);
+
+        const bundleName = bundleDefinitionMatch[1];
+        const bundleFunctionDefinition = bundleDefinitionMatch[2];
+
+        setStorage('bundleName', bundleName);
+
+        const bundleFunctionAliases = [];
+
+        [
+            ...src.matchAll(
+                new RegExp(
+                    String.raw`
+${bundleName}\.(\w+) = function\(\) \{
+    return typeof ${bundleName}\.${bundleFunctionDefinition}\.\w+`,
+                    'g'
+                )
+            ),
+        ]
+            .slice(0, 2)
+            .forEach((arr) => {
+                bundleFunctionAliases.push(arr[1]);
+            });
+
+        setStorage('bundleFunctionAliases', bundleFunctionAliases);
+
+        const pairings = [];
+
+        window.fallback = () => {
+            const bundlePreferredAlias = bundleFunctionAliases[0];
+
+            let i = 0;
+            let result = null;
+            while ((result = window[bundleName][bundlePreferredAlias](i)) != null) {
+                pairings[i] = result;
+                i++;
+            }
+
+            setStorage('pairings', pairings);
+
+            window.location.reload();
+        };
     }
 
     const s = document.createElement('script');
@@ -295,7 +364,7 @@ epp.plugin = plugin;
 window.epp = epp;
 
 function inject() {
-    fetch(getStorage('alphaLocation'))
+    fetch(config.alphaLocation)
         .then((res) => res.text())
         .then((alpha) => injectMain(jsb(alpha)));
 }
