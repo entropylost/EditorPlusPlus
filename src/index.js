@@ -195,6 +195,8 @@ const activatedPlugins = getStorage('activatedPlugins');
 function plugin(data) {
     if (loadingFinished) throw new Error('Editor++ has finished loading already.');
 
+    if (plugins[data.id]) return;
+
     const plugin = {
         id: data.id,
         name: data.name,
@@ -376,3 +378,20 @@ import defaultTheme from './default.theme';
 
 core(epp);
 defaultTheme(epp);
+
+{
+    const rp = require.context('./plugins/', true, /\.js$/);
+    rp.keys().forEach((x) => rp(x).default(epp));
+}
+
+if (window.eppPlugins != null && Array.isArray(window.eppPlugins)) {
+    for (let x of window.eppPlugins) {
+        if (typeof x === 'function') {
+            try {
+                x(epp);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    }
+}
