@@ -60,16 +60,6 @@ function injectMain(src) {
             if (numInstances != 1) throw new Error('Invalid regex at:\n' + str);
         }
         try {
-            initializeTheme(true, true);
-            for (let x in plugins) {
-                const plugin = plugins[x];
-                if (plugin.type === 'runtime') {
-                    if (activatedPlugins[plugin.id]) {
-                        plugin.activate();
-                    }
-                }
-            }
-
             const bundleName = getStorage('bundleName');
             const bundleFunctionAliases = getStorage('bundleFunctionAliases');
             const pairings = getStorage('pairings');
@@ -113,6 +103,16 @@ function injectMain(src) {
 
             for (const x of matchers) {
                 x(matcher, replace);
+            }
+
+            initializeTheme(true, true);
+            for (let x in plugins) {
+                const plugin = plugins[x];
+                if (plugin.type === 'runtime') {
+                    if (activatedPlugins[plugin.id]) {
+                        plugin.activate();
+                    }
+                }
             }
         } catch (e) {
             console.log(e);
