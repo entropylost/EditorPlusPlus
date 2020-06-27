@@ -333,3 +333,45 @@ page-ar()
     .hidden:checked ~ .checkbox-label::before
         transform: translate(-50%, -50%) scale(1)
         background: primary
+
+#info-container
+    position: fixed
+    bottom: 0%
+    left: 0%
+    width: 100%
+    font-size: 1.3em
+    font-family: 'Source Sans Pro', Arial, sans-serif
+    filter: drop-shadow(3px 3px 2px #0004) drop-shadow(0px 0px 5px #0002)
+
+.info
+    truncate(100%, 100%, 0.4rem)
+    margin: 1em auto
+    animation: 7s linear both running info-shrink
+    color: primary
+    background: secondary
+
+.info-interior
+    position: absolute
+    left: 50%
+    top: 50%
+    transform: translate(-50%, -50%)
+    text-align: center
+    font-size: 1.5em
+
+
+@keyframes info-shrink
+    0%
+        width: 30em
+        height: 3em
+    75%
+        width: 30em
+        height: 3em
+        opacity: 1
+    85%
+        width: 30em
+        height: 3em
+        opacity: 0
+    100%
+        width: 0em
+        height: 0em
+        opacity: 0
