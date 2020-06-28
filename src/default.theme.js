@@ -83,6 +83,16 @@ function activate(epp) {
             },
             name,
             element: page,
+            clear() {
+                pageInterior.innerHTML = '';
+            },
+            remove(elem) {
+                pageInterior.removeChild(elem);
+            },
+            destroy() {
+                interior.removeChild(page);
+                theme.pages[id] = undefined;
+            },
         };
 
         return page;

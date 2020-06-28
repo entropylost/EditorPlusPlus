@@ -112,6 +112,8 @@ function injectMain(src) {
                     if (activatedPlugins[plugin.id]) {
                         plugin.activate();
                     }
+                } else if (plugin.refreshAfterOtherPluginInit) {
+                    if (plugin.activated) plugin.display(epp, plugin);
                 }
             }
         } catch (e) {
@@ -199,16 +201,29 @@ function plugin(data) {
 
     const plugin = {
         id: data.id,
-        name: data.name,
+        name: data.name || data.id,
         description: data.description || 'NO DESCRIPTION',
         dependencies: data.dependencies || [],
-        activate: refresh,
-        deactivate: refresh,
+        activate() {
+            setPluginActivate(true);
+            refresh();
+        },
+        deactivate() {
+            setPluginActivate(false);
+            refresh();
+        },
         display: data.display || (() => {}),
+        hide: data.hide || (() => {}),
         hidden: data.hidden || false,
         activated: false,
+        refreshAfterOtherPluginInit: data.refreshAfterOtherPluginInit || false,
     };
     plugins[data.id] = plugin;
+
+    function setPluginActivate(value = plugin.activated) {
+        activatedPlugins[plugin.id] = value;
+        setStorage('activatedPlugins', activatedPlugins);
+    }
 
     function activateDependencies(plugin) {
         for (let x of plugin.dependencies) {
@@ -238,12 +253,16 @@ function plugin(data) {
             plugin.activated = true;
             const dep = activateDependencies(plugin);
             args.push(...dep);
+            setPluginActivate();
             data.activate(...args);
+            plugin.display(epp, plugin);
         };
         plugin.deactivate = (...args) => {
             if (!plugin.activated) return;
+            plugin.hide(epp, plugin);
             plugin.activated = false;
             deactivateDependents(plugin);
+            setPluginActivate();
             data.deactivate(...args);
         };
     } else if (activatedPlugins[plugin.id]) {

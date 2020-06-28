@@ -28,6 +28,8 @@ function initialize() {
     }, 3000);
 }
 
+let currentButton = null;
+
 export default (epp) =>
     epp.plugin({
         id: 'core',
@@ -36,9 +38,14 @@ export default (epp) =>
         dependencies: [],
         init: initialize,
         hidden: true,
+        refreshAfterOtherPluginInit: true,
         display(epp) {
             const { theme } = epp;
             const root = theme.pages.root;
+
+            if (theme.pages.plugins != null) {
+                theme.pages.plugins.clear();
+            }
 
             const elements = [];
 
@@ -58,7 +65,17 @@ export default (epp) =>
                 );
             }
 
-            const plugins = theme.page('plugins', 'Plugins', elements);
-            root.append(theme.next('Plugins', plugins));
+            if (theme.pages.plugins == null) {
+                const plugins = theme.page('plugins', 'Plugins', elements);
+                currentButton = theme.next('Plugins', plugins);
+                root.append(currentButton);
+            } else {
+                theme.pages.plugins.append(...elements);
+            }
+        },
+        hide(epp) {
+            const { theme } = epp;
+            theme.pages.root.remove(currentButton);
+            theme.pages.plugins.destroy();
         },
     });
