@@ -318,6 +318,7 @@ function injector(plugin, f, extra = []) {
             data: text,
         };
     }
+    const matches = Object.create(null);
     function defineLocation(escape, strings, ...values) {
         matchers.push((matchStr, replace) => {
             let capIndex = 0;
@@ -360,7 +361,6 @@ function injector(plugin, f, extra = []) {
             }
             str += ')';
             return replace(str, (_, ...args) => {
-                const matches = Object.create(null);
                 for (let i = 0; i < args.length - 2; i++) if (nameMatch[i] != null) matches[nameMatch[i]] = args[i];
                 let res = args[0];
                 for (let i = 1; i < args.length - 2; i++) {
