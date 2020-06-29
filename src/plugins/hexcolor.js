@@ -11,9 +11,10 @@ export default (epp) =>
     epp.plugin({
         id: 'hexcolor',
         dependencies: [],
-        init(epp, c, $, entry, ms, me, _) {
+        init(epp, c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _, delayed }) {
             const word = _('\\w+');
             const wordsWithCommas = _('(?:\\w+, )*\\w+');
+            const line = _('[^\\n]+');
 
             $`${entry('#insertHexColorPickerHere')}
             this[${'showColorPicker'}] = function(${wordsWithCommas}) {
@@ -74,6 +75,37 @@ epp.plugins.hexcolor.insertHexColorPicker(view);`
             c.locations['#setColorPickerValue'](
                 (m) => `epp.plugins.hexcolor.setColorPickerValue(view, ${m.startHexValue})`
             );
+            $`
+            function ${delayed(() => c.matches.refresh)}() {${entry('#refresh')}
+                var ${wordsWithCommas};
+${line}
+${line}
+${line}
+${line}
+${line}
+${line}
+                    ${word}[${'style'}][${'backgroundColor'}] = ${ms(
+                'hsbConverter'
+            )}${word}${me}(${word}, ${word}, ${word});`;
+            // function Q0c() {
+            //     var Y1c, g74, V74, S74;
+            //     Y1c = true;
+            //     g74 = 1309324817;
+            //     V74 = -1327364818;
+            //     S74 = 2;
+            //     for (var I74 = 1; O7J.h0A(I74.toString(), I74.toString().length, 14763) !== g74; I74++) {
+            //         N0c(f0c, T0c, h0c, Y1c);
+            //         n0c["style" /*O7J.t63(844)*/ ]["backgroundColor" /*O7J.t63(2722)*/ ] = o0c(f0c, T0c, h0c);
+            c.locations['#refresh'](
+                (m) => `
+let res = ${m.hsbConverter}(${m.hue}, ${m.saturation}, ${m.brightness})
+    .slice(4, -1)
+    .split(',')
+    .map(x => parseInt(x).toString(16).padStart(2, '0'));
+if (res.every(x => x[0] === x[1])) res = res.map(x => x[0]);
+document.getElementById('hexColorPicker').value = '#' + res.join('');
+`
+            );
 
             function setInputFilter(textbox, inputFilter) {
                 ['input', 'keydown', 'keyup', 'mousedown', 'mouseup', 'select', 'contextmenu', 'drop'].forEach(
@@ -101,7 +133,7 @@ epp.plugins.hexcolor.insertHexColorPicker(view);`
                 x.refresh();
             }
             const before = document.getElementById('mapeditor_colorpicker_cancelbutton');
-            const input = epp.$.input({ type: 'text' }, []);
+            const input = epp.$.input('hexColorPicker', { type: 'text' }, []);
             before.parentElement.insertBefore(input, before);
             c.insertHexColorPicker = (x) => {
                 console.log(x);

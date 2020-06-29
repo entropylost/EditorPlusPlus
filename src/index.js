@@ -118,7 +118,7 @@ function injectMain(src) {
             }
         } catch (e) {
             console.log(e);
-            fallback = true;
+            //fallback = true;
         }
     })();
 
@@ -284,9 +284,10 @@ function plugin(data) {
                 );
             });
             delayed.forEach((x) => x());
+        } else {
+            injector(plugin, data.init);
+            initializeTheme(true);
         }
-        injector(plugin, data.init);
-        initializeTheme(true);
     }
     delayed.forEach((x) => x());
 }
@@ -295,6 +296,8 @@ function injector(plugin, f, extra = []) {
     if (plugin.activated) return;
     plugin.activated = true;
     plugin.locations = Object.create(null);
+    plugin.matches = Object.create(null);
+
     function entry(name) {
         const computed = [];
         plugin.locations[name] = (x) => {
@@ -318,7 +321,19 @@ function injector(plugin, f, extra = []) {
             data: text,
         };
     }
-    const matches = Object.create(null);
+    function delayed(f) {
+        return {
+            type: 'delayed',
+            data: () => escape(f()),
+        };
+    }
+    function delayedRegex(f) {
+        return {
+            type: 'delayed',
+            data: f,
+        };
+    }
+    delayed.r = delayedRegex;
     function defineLocation(escape, strings, ...values) {
         matchers.push((matchStr, replace) => {
             let capIndex = 0;
@@ -354,6 +369,8 @@ function injector(plugin, f, extra = []) {
                             isWithinMatch = false;
                         } else if (v.type === 'regex') {
                             str += v.data;
+                        } else if (v.type === 'delayed') {
+                            str += v.data();
                         } else throw new Error('Invalid Type.');
                         break;
                 }
@@ -361,10 +378,11 @@ function injector(plugin, f, extra = []) {
             }
             str += ')';
             return replace(str, (_, ...args) => {
-                for (let i = 0; i < args.length - 2; i++) if (nameMatch[i] != null) matches[nameMatch[i]] = args[i];
+                for (let i = 0; i < args.length - 2; i++)
+                    if (nameMatch[i] != null) plugin.matches[nameMatch[i]] = args[i];
                 let res = args[0];
                 for (let i = 1; i < args.length - 2; i++) {
-                    if (entries[i] != null) res += entries[i](matches);
+                    if (entries[i] != null) res += entries[i](plugin.matches);
                     res += args[i];
                 }
                 return res;
@@ -374,8 +392,16 @@ function injector(plugin, f, extra = []) {
     const defineLocationString = (strings, ...values) => defineLocation(escape, strings, ...values);
     const defineLocationRegex = (strings, ...values) => defineLocation((x) => x, strings, ...values);
     defineLocationString.re = defineLocationRegex;
-    f(epp, plugin, ...extra, defineLocationString, entry, matchStart, matchEnd, regex);
-    if (plugin.activated && epp.theme != null) {
+    f(epp, plugin, ...extra, {
+        defineLocation: defineLocationString,
+        entry,
+        matchStart,
+        matchEnd,
+        regex,
+        delayed,
+    });
+    if (epp.theme != null) {
+        console.log(epp.theme);
         plugin.display(epp, plugin);
     }
 }

@@ -2,7 +2,7 @@ export default (epp) =>
     epp.plugin({
         id: 'map-finder',
         dependencies: [],
-        init(epp, c, $, entry, ms, me, _) {
+        init(epp, c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
             const word = _('\\w+');
             $`${entry('#physicsIntercept')}
             function ${word}(${word}) {

@@ -24,15 +24,15 @@ module.exports = {
             { test: /\.svg$/, loader: 'svg-inline-loader' },
         ],
     },
-    mode: 'development',
-    devtool: 'source-map',
+    mode: 'production',
+    // devtool: 'source-map',
     performance: { hints: false },
     plugins: [
         new webpack.optimize.LimitChunkCountPlugin({
             maxChunks: 1,
         }),
         new CopyPlugin({
-            patterns: [{ from: './manifest.json' }],
+            patterns: [{ from: './manifest.json' }, { from: './src/epp.svg' }],
         }),
     ],
 };

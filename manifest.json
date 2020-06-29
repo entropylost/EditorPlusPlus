@@ -1,11 +1,17 @@
 {
     "manifest_version": 2,
     "name": "Editor++",
-    "version": "1.0.0",
+    "version": "0.1.0",
 
-    "description": "Adds a red border to all webpages matching mozilla.org.",
+    "description": "Improved Editor for Bonk2.io. Currently includes a hex color picker.",
 
-    "icons": {},
+    "icons": {
+        "16": "epp.svg",
+        "32": "epp.svg",
+        "48": "epp.svg",
+        "96": "epp.svg",
+        "128": "epp.svg"
+    },
 
     "permissions": ["*://bonk2.io/beta/*", "webRequest", "webRequestBlocking"],
 

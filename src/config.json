@@ -3,6 +3,8 @@
     "theme": "default-theme",
     "activatedPlugins": {
         "core": true,
-        "default-theme": true
+        "default-theme": true,
+        "map-finder": true,
+        "hexcolor": true
     }
 }
