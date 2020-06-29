@@ -118,7 +118,7 @@ function injectMain(src) {
             }
         } catch (e) {
             console.log(e);
-            //fallback = true;
+            fallback = true;
         }
     })();
 
@@ -401,7 +401,6 @@ function injector(plugin, f, extra = []) {
         delayed,
     });
     if (epp.theme != null) {
-        console.log(epp.theme);
         plugin.display(epp, plugin);
     }
 }
