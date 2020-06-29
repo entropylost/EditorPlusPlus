@@ -24,8 +24,8 @@ module.exports = {
             { test: /\.svg$/, loader: 'svg-inline-loader' },
         ],
     },
-    mode: 'production',
-    // devtool: 'source-map',
+    mode: 'development',
+    devtool: 'source-map',
     performance: { hints: false },
     plugins: [
         new webpack.optimize.LimitChunkCountPlugin({

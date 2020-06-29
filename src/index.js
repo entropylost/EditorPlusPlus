@@ -262,7 +262,7 @@ function plugin(data) {
             plugin.hide(epp, plugin);
             plugin.activated = false;
             deactivateDependents(plugin);
-            setPluginActivate();
+            setPluginActivate(false);
             data.deactivate(...args);
         };
     } else if (activatedPlugins[plugin.id]) {

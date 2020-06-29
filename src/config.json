@@ -5,6 +5,7 @@
         "core": true,
         "default-theme": true,
         "map-finder": true,
-        "hexcolor": true
+        "hexcolor": true,
+        "mapsizeoptions": true
     }
 }

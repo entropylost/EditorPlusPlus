@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Editor++",
-    "version": "0.1.0",
+    "version": "0.2.0",
 
     "description": "Improved Editor for Bonk2.io. Currently includes a hex color picker.",
 
@@ -15,9 +15,7 @@
 
     "permissions": ["*://bonk2.io/beta/*", "webRequest", "webRequestBlocking"],
 
-    "web_accessible_resources": [
-      "content.bundle.js"
-    ],
+    "web_accessible_resources": ["content.bundle.js"],
 
     "background": {
         "scripts": ["./background.bundle.js"]
