@@ -112,7 +112,7 @@ function injectMain(src) {
                     if (activatedPlugins[plugin.id]) {
                         plugin.activate();
                     }
-                } else if (plugin.refreshAfterOtherPluginInit) {
+                } else {
                     if (plugin.activated) plugin.display(epp, plugin);
                 }
             }
@@ -216,7 +216,6 @@ function plugin(data) {
         hide: data.hide || (() => {}),
         hidden: data.hidden || false,
         activated: false,
-        refreshAfterOtherPluginInit: data.refreshAfterOtherPluginInit || false,
     };
     plugins[data.id] = plugin;
 
@@ -400,9 +399,6 @@ function injector(plugin, f, extra = []) {
         regex,
         delayed,
     });
-    if (epp.theme != null) {
-        plugin.display(epp, plugin);
-    }
 }
 
 epp.plugin = plugin;

@@ -28,7 +28,7 @@ function initialize() {
     }, 3000);
 }
 
-let currentButton = null;
+const buttons = [];
 
 export default (epp) =>
     epp.plugin({
@@ -38,7 +38,6 @@ export default (epp) =>
         dependencies: [],
         init: initialize,
         hidden: true,
-        refreshAfterOtherPluginInit: true,
         display(epp) {
             const { theme } = epp;
             const root = theme.pages.root;
@@ -67,15 +66,16 @@ export default (epp) =>
 
             if (theme.pages.plugins == null) {
                 const plugins = theme.page('plugins', 'Plugins', elements);
-                currentButton = theme.next('Plugins', plugins);
-                root.append(currentButton);
+                const current = theme.next('Plugins', plugins);
+                buttons.push(current);
+                root.append(current);
             } else {
                 theme.pages.plugins.append(...elements);
             }
         },
         hide(epp) {
             const { theme } = epp;
-            theme.pages.root.remove(currentButton);
+            buttons.forEach((current) => theme.pages.root.remove(current));
             theme.pages.plugins.destroy();
         },
     });

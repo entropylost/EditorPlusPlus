@@ -22,6 +22,10 @@ module.exports = {
                 ],
             },
             { test: /\.svg$/, loader: 'svg-inline-loader' },
+            {
+                test: /\.(png|jpg|gif)$/i,
+                use: ['url-loader'],
+            },
         ],
     },
     mode: 'development',
@@ -32,7 +36,7 @@ module.exports = {
             maxChunks: 1,
         }),
         new CopyPlugin({
-            patterns: [{ from: './manifest.json' }, { from: './src/epp.svg' }],
+            patterns: [{ from: './manifest.json' }, { from: './src/icons/', to: 'icons/' }],
         }),
     ],
 };
