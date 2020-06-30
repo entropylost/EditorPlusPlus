@@ -78,7 +78,7 @@ truncate(width, height, size)
     transition: color buttonTime, background buttonTime, width buttonTime, padding-left buttonTime, padding-right buttonTime
 
     user-select: none
-    cursor: url(icons/cursor.png), auto
+    cursor: pointer
 
     &:hover, #container.activated > &
         width: extendedSize
@@ -89,11 +89,11 @@ truncate(width, height, size)
 
         & span
             width: 0
-
+        & svg *
+            --primaryIconColor: secondary
+            --secondaryIconColor: secondary
         & > #icon
             left: -1.5em
-            --primaryIconColor: secondary
-
     &:active
         filter: brightness(95%)
 
@@ -120,8 +120,8 @@ truncate(width, height, size)
 
     & *
         transition: fill buttonTime
-
-    --primaryIconColor: #6e92a4
+        --primaryIconColor: #6e92a4
+        --secondaryIconColor: #d28b6a
 
 .hidden
     visibility: hidden
