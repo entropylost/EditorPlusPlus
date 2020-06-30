@@ -1,9 +1,7 @@
 function activate(epp) {
     const { $, theme } = epp;
     import('./default.theme.styl');
-    import('./icons/epp.svg').then((svg) =>
-        document.querySelectorAll('.icon').forEach((x) => (x.innerHTML = svg.default))
-    );
+    import('./epp.svg').then((svg) => document.querySelectorAll('.icon').forEach((x) => (x.innerHTML = svg.default)));
     const splitElements = 'Editor++'.split('').flatMap((e) => [$.span([]), e]);
     const titleInterior = $.div('title-interior', splitElements);
     const title = $.div(
