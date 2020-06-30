@@ -3,7 +3,7 @@
     "name": "Editor++",
     "version": "0.2.0",
 
-    "description": "Improved Editor for Bonk2.io. Currently includes a hex color picker.",
+    "description": "Improved Editor for Bonk2.io. Currently includes a hex color picker and increased map size options.",
 
     "icons": {
         "16": "epp.svg",
