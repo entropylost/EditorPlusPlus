@@ -7,7 +7,8 @@
     "scripts": {
         "build": "webpack",
         "watch": "webpack --watch",
-        "test": "web-ext run --source-dir dist/ --firefox-profile=dev-edition-default --firefox=/opt/firefox/firefox-bin"
+        "test": "web-ext run --source-dir dist/ --firefox-profile=dev-edition-default --firefox=/opt/firefox/firefox-bin",
+        "icon-build": "for x in 16 32 48 96 128 ; do inkscape --export-png src/icons/${x}.png -w ${x} src/icons/epp-colored.svg ; done"
     },
     "repository": {
         "type": "git",
