@@ -87,7 +87,7 @@ function activate(epp) {
                 pageInterior.innerHTML = '';
             },
             remove(elem) {
-                pageInterior.removeChild(elem);
+                if (pageInterior.contains(elem)) pageInterior.removeChild(elem);
             },
             destroy() {
                 interior.removeChild(page);

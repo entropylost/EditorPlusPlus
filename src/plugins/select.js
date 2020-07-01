@@ -22,7 +22,7 @@ export default (epp) =>
                 click: (activated) => {
                     refreshPlatforms();
                     if (!activated) {
-                        epp.plugins.select.select = [];
+                        epp.plugins.select.length = 0;
                         if (platforms != null)
                             for (const x of platforms) {
                                 x.classList.remove('platform-selected');
@@ -38,9 +38,11 @@ export default (epp) =>
             theme.pages.editor.remove(button);
         },
         activate(c, mf) {
+            c.select = [];
             if (!activated) import('./select.styl');
             activated = true;
             handler = (o, n) => {
+                if (!active) return;
                 refreshPlatforms();
                 if (platforms == null) return;
                 if (c.select.includes(o)) {
@@ -51,8 +53,7 @@ export default (epp) =>
                     platforms[n].classList.add('platform-selected');
                 }
             };
-            console.log(mf);
-            //mf.onPlatformChange.append(handler);
+            mf.onPlatformChange.push(handler);
         },
         deactivate(_, mf) {
             const i = mf.onPlatformChange.indexOf(handler);
