@@ -38,13 +38,9 @@ export default (epp) =>
         dependencies: [],
         init: initialize,
         hidden: true,
-        display(epp) {
+        display() {
             const { theme } = epp;
             const root = theme.pages.root;
-
-            if (theme.pages.plugins != null) {
-                theme.pages.plugins.clear();
-            }
 
             const elements = [];
 
@@ -70,10 +66,20 @@ export default (epp) =>
                 buttons.push(current);
                 root.append(current);
             } else {
+                theme.pages.plugins.clear();
                 theme.pages.plugins.append(...elements);
             }
+
+            if (theme.pages.editor == null) {
+                const editor = theme.page('editor', 'Editor Menu', []);
+                const current = theme.next('Editor Menu', editor);
+                buttons.push(current);
+                root.append(current);
+            } else {
+                theme.pages.editor.clear();
+            }
         },
-        hide(epp) {
+        hide() {
             const { theme } = epp;
             buttons.forEach((current) => theme.pages.root.remove(current));
             theme.pages.plugins.destroy();

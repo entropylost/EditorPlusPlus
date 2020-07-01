@@ -11,7 +11,7 @@ export default (epp) =>
     epp.plugin({
         id: 'hexcolor',
         dependencies: [],
-        init(epp, c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _, delayed }) {
+        init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _, delayed }) {
             const word = _('\\w+');
             const wordsWithCommas = _('(?:\\w+, )*\\w+');
             const line = _('[^\\n]+');

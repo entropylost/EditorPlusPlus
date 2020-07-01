@@ -185,15 +185,38 @@ function activate(epp) {
     };
 
     theme.info = (text) => {
-        const info = $.div.info([$.span['info-interior']([text])]);
-        info.addEventListener('animationend', () => infocontainer.removeChild(info));
-        infocontainer.appendChild(info);
+        alert(text);
+        // const info = $.div.info([$.span['info-interior']([text])]);
+        // info.addEventListener('animationend', () => infocontainer.removeChild(info));
+        // infocontainer.appendChild(info);
     };
 
     theme.seperator = () => $.div.seperator([]);
 
     theme.error = (e) => {
         throw new Error(e);
+    };
+
+    theme.button = ({ type = 'fill', text, click, color = '#FFF', inline = false, toggle = false }) => {
+        const button = $.div({
+            onclick() {
+                if (toggle) {
+                    button.classList.toggle('button-activated');
+                    click(button.classList.contains('button-activated'));
+                } else {
+                    click();
+                }
+            },
+            style: `--color: ${color}`,
+        })(text);
+        const typeClass = {
+            fill: 'button-fill',
+            ghost: 'button-ghost',
+        }[type];
+        if (typeClass == null) theme.error('Invalid Button Type');
+        button.classList.add(typeClass);
+        if (inline) button.classList.add('button-inline');
+        return button;
     };
 
     theme.clear = () => {

@@ -2,7 +2,7 @@ export default (epp) =>
     epp.plugin({
         id: 'map-finder',
         dependencies: [],
-        init(epp, c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
+        init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
             const word = _('\\w+');
             $`${entry('#physicsIntercept')}
             function ${word}(${word}) {
@@ -11,7 +11,7 @@ export default (epp) =>
             // function n8Q(r9c) {
             //     var m8c, c9c, l9c;
             //     m8c = f8Q["physics" /*O7J.t63(2306)*/ ]["bodies" /*O7J.w63(3422)*/ ][O8Q];
-            c.locations['#physicsIntercept']((m) => `epp.edit = (f) => ${m.map} = f(${m.map});`);
+            c.locations['#physicsIntercept']((m) => `epp.plugins['map-finder'].edit = (f) => ${m.map} = f(${m.map});`);
             $`
                         ${word} = ${word}[${'insertRow'}]();
                         ${word}[${'onclick'}] = function() {${entry('#platformclick')}
@@ -27,9 +27,9 @@ export default (epp) =>
             // };
             c.locations['#platformclick'](
                 (m) => `
-epp.onPlatformChange.forEach((f) => f(epp.currentPlatformIndex, ${m.index}));
-epp.currentPlatformIndex = ${m.index};`
+epp.plugins['map-finder'].onPlatformChange.forEach((f) => f(epp.plugins['map-finder'].currentPlatformIndex, ${m.index}));
+epp.plugins['map-finder'].currentPlatformIndex = ${m.index};`
             );
-            epp.onPlatformChange = [console.log];
+            c.onPlatformChange = [console.log];
         },
     });

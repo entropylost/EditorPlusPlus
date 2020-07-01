@@ -2,7 +2,7 @@ export default (epp) =>
     epp.plugin({
         id: 'mapsizeoptions',
         dependencies: [],
-        init(epp, c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
+        init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
             $`
                 ${ms('array')}${_('\\w+')}${me}[${'push'}]({
                     value: 5,

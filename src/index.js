@@ -11,7 +11,7 @@ function refreshUI() {
     epp.theme.clear();
     for (let x in plugins) {
         const plugin = plugins[x];
-        if (plugin.activated) plugin.display(epp, plugin);
+        if (plugin.activated) plugin.display(plugin);
     }
 }
 
@@ -113,12 +113,12 @@ function injectMain(src) {
                         plugin.activate();
                     }
                 } else {
-                    if (plugin.activated) plugin.display(epp, plugin);
+                    if (plugin.activated) plugin.display(plugin);
                 }
             }
         } catch (e) {
             console.log(e);
-            fallback = true;
+            //fallback = true;
         }
     })();
 
@@ -205,10 +205,12 @@ function plugin(data) {
         description: data.description || 'NO DESCRIPTION',
         dependencies: data.dependencies || [],
         activate() {
+            if (plugin.activated) return;
             setPluginActivate(true);
             refresh();
         },
         deactivate() {
+            if (!plugin.activated) return;
             setPluginActivate(false);
             refresh();
         },
@@ -225,6 +227,7 @@ function plugin(data) {
     }
 
     function activateDependencies(plugin) {
+        const dep = [];
         for (let x of plugin.dependencies) {
             if (plugins[x] == null)
                 epp.theme.error(`Can not activate ${plugin.name}, this installation is missing ${x}.`);
@@ -232,7 +235,9 @@ function plugin(data) {
                 epp.theme.error(`Can not activate ${plugin.name} as ${x} is not activated`);
             plugins[x].activate();
             activateDependencies(plugins[x]);
+            dep.push(plugins[x]);
         }
+        return dep;
     }
 
     function deactivateDependents(plugin) {
@@ -247,22 +252,21 @@ function plugin(data) {
     if (data.allowReloading) {
         plugin.type = 'runtime';
 
-        plugin.activate = (...args) => {
+        plugin.activate = () => {
             if (plugin.activated) return;
             plugin.activated = true;
             const dep = activateDependencies(plugin);
-            args.push(...dep);
             setPluginActivate();
-            data.activate(...args);
-            plugin.display(epp, plugin);
+            if (data.activate) data.activate(plugin, ...dep);
+            if (epp.theme != null) plugin.display(plugin);
         };
-        plugin.deactivate = (...args) => {
+        plugin.deactivate = () => {
             if (!plugin.activated) return;
-            plugin.hide(epp, plugin);
+            if (epp.theme != null) plugin.hide(plugin);
             plugin.activated = false;
             deactivateDependents(plugin);
             setPluginActivate(false);
-            data.deactivate(...args);
+            if (data.deactivate) data.deactivate(plugin, ...plugin.dependencies.map((x) => plugins[x]));
         };
     } else if (activatedPlugins[plugin.id]) {
         plugin.type = 'compile';
@@ -391,7 +395,7 @@ function injector(plugin, f, extra = []) {
     const defineLocationString = (strings, ...values) => defineLocation(escape, strings, ...values);
     const defineLocationRegex = (strings, ...values) => defineLocation((x) => x, strings, ...values);
     defineLocationString.re = defineLocationRegex;
-    f(epp, plugin, ...extra, {
+    f(plugin, ...extra, {
         defineLocation: defineLocationString,
         entry,
         matchStart,
