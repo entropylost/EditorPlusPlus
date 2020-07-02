@@ -197,8 +197,16 @@ function activate(epp) {
         throw new Error(e);
     };
 
-    theme.button = ({ type = 'fill', text, click, color = '#FFF', inline = false, toggle = false }) => {
-        const button = $.div({
+    theme.button = ({
+        type = 'fill',
+        text,
+        click,
+        primary = '#FFFFFF',
+        secondary = '#121A22',
+        inline = false,
+        toggle = false,
+    }) => {
+        const button = $.div.button({
             onclick() {
                 if (toggle) {
                     button.classList.toggle('button-activated');
@@ -207,7 +215,7 @@ function activate(epp) {
                     click();
                 }
             },
-            style: `--color: ${color}`,
+            style: `--button-primary: ${primary}; --button-secondary: ${secondary}; --button-shadow: ${primary}11`,
         })(text);
         const typeClass = {
             fill: 'button-fill',
@@ -216,6 +224,7 @@ function activate(epp) {
         if (typeClass == null) theme.error('Invalid Button Type');
         button.classList.add(typeClass);
         if (inline) button.classList.add('button-inline');
+        if (toggle) button.classList.add('button-toggle');
         return button;
     };
 

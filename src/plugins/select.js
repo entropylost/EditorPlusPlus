@@ -17,6 +17,7 @@ export default (epp) =>
             const { theme } = epp;
             if (button) theme.pages.editor.remove(button);
             button = theme.button({
+                type: 'ghost',
                 text: 'Toggle Selection',
                 toggle: true,
                 click: (activated) => {

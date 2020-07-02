@@ -351,35 +351,59 @@ page-ar()
     font-family: 'Source Sans Pro', Arial, sans-serif
     filter: drop-shadow(3px 3px 2px #0004) drop-shadow(0px 0px 5px #0002)
 
-.info
-    truncate(100%, 100%, 0.4rem)
-    margin: 1em auto
-    animation: 7s linear both running info-shrink
-    color: primary
-    background: secondary
-
-.info-interior
-    position: absolute
-    left: 50%
-    top: 50%
-    transform: translate(-50%, -50%)
+.button
+    padding: 0.5em
+    border-radius: 0.3em
+    cursor: pointer
+    min-width: 1.5em
     text-align: center
-    font-size: 1.5em
 
+    buttonShadow()
+        return unquote("1px 1px 2px var(--button-shadow), 2px 2px 4px var(--button-shadow), 3px 3px 8px var(--button-shadow), 4px 4px 16px var(--button-shadow)")
+    buttonShadow2()
+        box-shadow: 1px 1px 4px var(--button-shadow),
+                    2px 2px 8px var(--button-shadow),
+                    3px 3px 16px var(--button-shadow),
+                    4px 4px 32px var(--button-shadow),
+                    5px 5px 64px var(--button-shadow),
+                    1px 1px 4px var(--button-shadow),
+                    2px 2px 8px var(--button-shadow),
+                    3px 3px 16px var(--button-shadow),
+                    4px 4px 32px var(--button-shadow),
+                    5px 5px 64px var(--button-shadow),
+                    buttonShadow()
 
-@keyframes info-shrink
-    0%
-        width: 30em
-        height: 3em
-    75%
-        width: 30em
-        height: 3em
-        opacity: 1
-    85%
-        width: 30em
-        height: 3em
-        opacity: 0
-    100%
-        width: 0em
-        height: 0em
-        opacity: 0
+    &.button-fill
+        background: var(--button-primary)
+        color: var(--button-secondary)
+        transition: filter buttonTime, box-shadow buttonTime
+        box-shadow: buttonShadow();
+    &.button-ghost
+        color: var(--button-primary)
+        border: 1px solid var(--button-primary)
+        background: var(--button-secondary)
+        transition: color buttonTime, background buttonTime, box-shadow buttonTime
+        box-shadow: buttonShadow();
+    &.button-fill:hover, &.button-fill.button-activated
+        filter: brightness(90%)
+        buttonShadow2()
+
+    &.button-ghost:hover
+        buttonShadow2()
+
+    &.button-ghost:not(.button-toggle):hover, &.button-ghost.button-activated
+        background: var(--button-primary)
+        color: var(--button-secondary)
+
+    &.button-inline
+        display: inline
+    &:not(.button-inline)
+        display: inline-block
+        position: relative
+        left: 50%
+        transform: translateX(-50%)
+    &.button-fill:active
+        transition-property: none
+        filter: brightness(80%)
+    &.button-ghost:active
+        filter: brightness(80%)

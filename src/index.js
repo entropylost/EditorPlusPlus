@@ -110,11 +110,13 @@ function injectMain(src) {
                 const plugin = plugins[x];
                 if (plugin.type === 'runtime') {
                     if (activatedPlugins[plugin.id]) {
-                        plugin.activate();
+                        plugin.activate(true);
                     }
-                } else {
-                    if (plugin.activated) plugin.display(plugin);
                 }
+            }
+            for (let x in plugins) {
+                const plugin = plugins[x];
+                if (plugin.activated) plugin.display(plugin);
             }
         } catch (e) {
             console.log(e);
@@ -252,13 +254,13 @@ function plugin(data) {
     if (data.allowReloading) {
         plugin.type = 'runtime';
 
-        plugin.activate = () => {
+        plugin.activate = (delay = false) => {
             if (plugin.activated) return;
             plugin.activated = true;
             const dep = activateDependencies(plugin);
             setPluginActivate();
             if (data.activate) data.activate(plugin, ...dep);
-            if (epp.theme != null) plugin.display(plugin);
+            if (epp.theme != null && !delay) plugin.display(plugin);
         };
         plugin.deactivate = () => {
             if (!plugin.activated) return;
