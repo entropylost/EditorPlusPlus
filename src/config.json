@@ -4,8 +4,10 @@
     "activatedPlugins": {
         "core": true,
         "default-theme": true,
-        "map-finder": true,
+        "mapfinder": true,
         "hexcolor": true,
-        "mapsizeoptions": true
+        "mapsizeoptions": true,
+        "select": true,
+        "multiapply": true
     }
 }

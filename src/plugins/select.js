@@ -11,7 +11,7 @@ function refreshPlatforms() {
 export default (epp) =>
     epp.plugin({
         id: 'select',
-        dependencies: ['map-finder'],
+        dependencies: ['mapfinder'],
         allowReloading: true,
         display() {
             const { theme } = epp;
@@ -58,6 +58,6 @@ export default (epp) =>
         },
         deactivate(_, mf) {
             const i = mf.onPlatformChange.indexOf(handler);
-            if (i != -1) mf.onPlatformChange.splice(i, 1);
+            if (i !== -1) mf.onPlatformChange.splice(i, 1);
         },
     });
