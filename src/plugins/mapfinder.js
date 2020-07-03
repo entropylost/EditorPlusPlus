@@ -5,13 +5,17 @@ export default (epp) =>
         init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
             const word = _('\\w+');
             $`${entry('#physicsIntercept')}
-            function ${word}(${word}) {
+            function ${ms('refresh')}${word}${me}(${word}) {
                 var ${word}, ${word}, ${word};
                 ${word} = ${ms('map')}${word}${me}[${'physics'}][${'bodies'}][${word}];`;
             // function n8Q(r9c) {
             //     var m8c, c9c, l9c;
             //     m8c = f8Q["physics" /*O7J.t63(2306)*/ ]["bodies" /*O7J.w63(3422)*/ ][O8Q];
-            c.locations['#physicsIntercept']((m) => `epp.plugins.mapfinder.edit = (f) => ${m.map} = f(${m.map});`);
+            c.locations['#physicsIntercept'](
+                (m) => `
+                epp.plugins.mapfinder.map = () => ${m.map};
+                epp.plugins.mapfinder.refresh = (x) => ${m.refresh}(x)`
+            );
             $`
                         ${word} = ${word}[${'insertRow'}]();
                         ${word}[${'onclick'}] = function() {${entry('#platformclick')}
