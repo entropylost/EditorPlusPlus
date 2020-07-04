@@ -1,9 +1,9 @@
 {
     "manifest_version": 2,
     "name": "Editor++",
-    "version": "0.3.0",
+    "version": "0.4.0",
 
-    "description": "Improved Editor for Bonk2.io. Currently includes a hex color picker and increased map size options.",
+    "description": "Editor++ is a mod for bonk2.io that improves the built-in editor.",
 
     "icons": {
         "16": "icons/16.png",

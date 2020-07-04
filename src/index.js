@@ -57,7 +57,7 @@ function injectMain(src) {
                 numInstances++;
                 return func(...args);
             });
-            if (numInstances != 1) throw new Error('Invalid regex at:\n' + str);
+            if (numInstances !== 1) throw new Error('Invalid regex at:\n' + str);
         }
         try {
             const bundleName = getStorage('bundleName');

@@ -5,7 +5,8 @@ let handler;
 let activated = false;
 
 function refreshPlatforms() {
-    platforms = document.getElementById('mapeditor_leftbox_platformtable').firstElementChild.children;
+    if (document.getElementById('mapeditor_leftbox_platformtable') != null)
+        platforms = document.getElementById('mapeditor_leftbox_platformtable').firstElementChild.children;
 }
 
 export default (epp) =>
@@ -49,7 +50,7 @@ export default (epp) =>
                 if (c.select.includes(o)) {
                     platforms[o].classList.add('platform-selected');
                 }
-                if (active) {
+                if (!c.select.includes(n)) {
                     c.select.push(n);
                     platforms[n].classList.add('platform-selected');
                 }

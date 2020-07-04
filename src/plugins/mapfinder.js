@@ -31,9 +31,38 @@ export default (epp) =>
             // };
             c.locations['#platformclick'](
                 (m) => `
-epp.plugins.mapfinder.onPlatformChange.forEach((f) => f(epp.plugins.mapfinder.currentPlatformIndex, ${m.index}));
-epp.plugins.mapfinder.currentPlatformIndex = ${m.index};`
+if (epp != null && epp.plugins != null && epp.plugins.mapfinder != null) {
+    if (Array.isArray(epp.plugins.mapfinder.onPlatformChange)) epp.plugins.mapfinder.onPlatformChange.forEach((f) => f(epp.plugins.mapfinder.currentPlatformIndex, ${m.index}));
+    epp.plugins.mapfinder.currentPlatformIndex = ${m.index};
+}`
             );
             c.onPlatformChange = [console.log];
+
+            $`${entry('#redraw')}
+            function ${word}() {
+                ${word}[${'clearHighlightSpawn'}]();
+                if (${word} == false) {
+                    ${ms('redraw')}${word}${me}(true);
+                }
+            }`;
+            // function w3c() {
+            //     x8Q["clearHighlightSpawn" /*O7J.w63(132)*/ ]();
+            //     if (u8Q == false) {
+            //         U8Q(true);
+            //     }
+            // }
+            c.locations['#redraw'](
+                (m) => `
+let trueRedraw;
+epp.plugins.mapfinder.redraw = () => trueRedraw(true);
+setTimeout(() => {
+    trueRedraw = ${m.redraw};
+    ${m.redraw} = (x) => {
+        trueRedraw(x);
+        if (x) epp.plugins.mapfinder.onRedraw.forEach(a => a());
+    }
+}, 0);`
+            );
+            c.onRedraw = [console.log];
         },
     });
