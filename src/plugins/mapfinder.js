@@ -4,31 +4,38 @@ export default (epp) =>
         dependencies: [],
         init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
             const word = _('\\w+');
+            const wordsWithCommas = _('(?:\\w+, )*\\w+');
+            const line = _('[^\\n]+');
+            const arrAccess = _('\\w+\\[\\d+\\]');
+            const argsAccess = _('\\w+\\[0\\]\\[\\d+\\]');
+
             $`${entry('#physicsIntercept')}
+            function ${ms('refresh')}${word}${me}(${word}) {
+                var ${word} = [arguments];
+                ${arrAccess} = ${ms('map')}${arrAccess}${me}[${'physics'}][${'bodies'}][${arrAccess}];`;
+            /*
             function ${ms('refresh')}${word}${me}(${word}) {
                 var ${word}, ${word}, ${word};
                 ${word} = ${ms('map')}${word}${me}[${'physics'}][${'bodies'}][${word}];`;
-            // function n8Q(r9c) {
-            //     var m8c, c9c, l9c;
-            //     m8c = f8Q["physics" /*O7J.t63(2306)*/ ]["bodies" /*O7J.w63(3422)*/ ][O8Q];
+            */
+
             c.locations['#physicsIntercept'](
                 (m) => `
                 epp.plugins.mapfinder.map = () => ${m.map};
                 epp.plugins.mapfinder.refresh = (x) => ${m.refresh}(x)`
             );
             $`
-                        ${word} = ${word}[${'insertRow'}]();
-                        ${word}[${'onclick'}] = function() {${entry('#platformclick')}
-                            ${word}.${word}();
-                            ${word}(${word}[${'physics'}][${'bro'}][${ms('index')}${word}${me}]);
-                            ${word}(${word});
-                        };`;
-            // I8c = g9Q["insertRow" /*O7J.t63(1937)*/ ]();
-            // I8c["onclick" /*O7J.w63(753)*/ ] = function() {
-            //     O7J.E7J();
-            //     u3c(f8Q["physics" /*O7J.t63(2306)*/ ]["bro" /*O7J.t63(1572)*/ ][X8c]);
-            //     L0Q(I8c);
-            // };
+                        ${arrAccess} = ${arrAccess}[${'insertRow'}]();
+${line}
+                        ${arrAccess}[${'onclick'}] = function() {${entry('#platformclick')}
+                            var ${word} = [arguments];
+                            ${word}(${arrAccess}[${'physics'}][${'bro'}][${ms('index')}${argsAccess}${me}]);`;
+            // n1a[1] = o9a[86]["insertRow" /*v5y.c25(2357)*/ ]();
+            // v5y.C5y();
+            // n1a[1]["onclick" /*v5y.d25(1772)*/ ] = function() {
+            //     var X1a = [arguments];
+            //     i0Y(o9a[2]["physics" /*v5y.c25(856)*/ ]["bro" /*v5y.d25(3405)*/ ][n1a[0][0]]);
+
             c.locations['#platformclick'](
                 (m) => `
 if (epp != null && epp.plugins != null && epp.plugins.mapfinder != null) {
@@ -40,8 +47,8 @@ if (epp != null && epp.plugins != null && epp.plugins.mapfinder != null) {
 
             $`${entry('#redraw')}
             function ${word}() {
-                ${word}[${'clearHighlightSpawn'}]();
-                if (${word} == false) {
+                ${arrAccess}[${'clearHighlightSpawn'}]();
+                if (${arrAccess} == false) {
                     ${ms('redraw')}${word}${me}(true);
                 }
             }`;

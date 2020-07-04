@@ -45,6 +45,34 @@ function refresh() {
     return false;
 }
 
+function scanSource(src) {
+    const bundleDefinitionMatcher = /(\w+)\.(\w+) = \(function\(\) \{/;
+
+    const bundleDefinitionMatch = src.match(bundleDefinitionMatcher);
+
+    const bundleName = bundleDefinitionMatch[1];
+    const bundleFunctionDefinition = bundleDefinitionMatch[2];
+
+    const bundleFunctionAliases = [];
+
+    [
+        ...src.matchAll(
+            new RegExp(
+                String.raw`
+${bundleName}\.(\w+) = function\(\) \{
+    return typeof ${bundleName}\.${bundleFunctionDefinition}\.\w+`,
+                'g'
+            )
+        ),
+    ]
+        .slice(0, 2)
+        .forEach((arr) => {
+            bundleFunctionAliases.push(arr[1]);
+        });
+
+    return { bundleName, bundleFunctionAliases };
+}
+
 function injectMain(src) {
     let fallback = false;
 
@@ -59,12 +87,19 @@ function injectMain(src) {
             });
             if (numInstances !== 1) throw new Error('Invalid regex at:\n' + str);
         }
+
         try {
             const bundleName = getStorage('bundleName');
             const bundleFunctionAliases = getStorage('bundleFunctionAliases');
             const pairings = getStorage('pairings');
 
-            if (bundleName == null || bundleFunctionAliases == null || pairings == null) {
+            const test = scanSource(src);
+
+            if (
+                bundleName !== test.bundleName ||
+                bundleFunctionAliases !== test.bundleFunctionAliases ||
+                pairings == null
+            ) {
                 fallback = true;
                 return false;
             }
@@ -120,43 +155,20 @@ function injectMain(src) {
             }
         } catch (e) {
             console.log(e);
-            //fallback = true;
+            alert('Editor++ does not work, please disable it.');
         }
     })();
 
     if (fallback) {
+        const { bundleName, bundleFunctionAliases } = scanSource(src);
+
+        setStorage('bundleName', bundleName);
+        setStorage('bundleFunctionAliases', bundleFunctionAliases);
+
         source =
             src +
             `
 setTimeout(window.fallback, 2000);`;
-
-        const bundleDefinitionMatcher = /(\w+)\.(\w+) = \(function\(\) \{/;
-
-        const bundleDefinitionMatch = src.match(bundleDefinitionMatcher);
-
-        const bundleName = bundleDefinitionMatch[1];
-        const bundleFunctionDefinition = bundleDefinitionMatch[2];
-
-        setStorage('bundleName', bundleName);
-
-        const bundleFunctionAliases = [];
-
-        [
-            ...src.matchAll(
-                new RegExp(
-                    String.raw`
-${bundleName}\.(\w+) = function\(\) \{
-    return typeof ${bundleName}\.${bundleFunctionDefinition}\.\w+`,
-                    'g'
-                )
-            ),
-        ]
-            .slice(0, 2)
-            .forEach((arr) => {
-                bundleFunctionAliases.push(arr[1]);
-            });
-
-        setStorage('bundleFunctionAliases', bundleFunctionAliases);
 
         const pairings = [];
 

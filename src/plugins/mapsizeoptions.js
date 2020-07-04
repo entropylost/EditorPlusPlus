@@ -4,13 +4,13 @@ export default (epp) =>
         dependencies: [],
         init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
             $`
-                ${ms('array')}${_('\\w+')}${me}[${'push'}]({
+                ${ms('array')}${_('\\w+\\[\\d+\\]')}${me}[${'push'}]({
                     value: 5,
                     text: ${'13 - Biggest'}
                 });${entry('#endingMapEditor')}`;
-            // k8c["push" /*O7J.w63(236)*/ ]({
+            // E1a[3]["push" /*v5y.c25(125)*/ ]({
             //     value: 5,
-            //     text: "13 - Biggest" /*O7J.w63(3348)*/
+            //     text: "13 - Biggest" /*v5y.c25(596)*/
             // });
             c.locations['#endingMapEditor']((m) => `epp.plugins.mapsizeoptions.populateMapSizeArray(${m.array});`);
 

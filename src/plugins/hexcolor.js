@@ -15,33 +15,31 @@ export default (epp) =>
             const word = _('\\w+');
             const wordsWithCommas = _('(?:\\w+, )*\\w+');
             const line = _('[^\\n]+');
+            const arrAccess = _('\\w+\\[\\d+\\]');
 
             $`${entry('#insertHexColorPickerHere')}
             this[${'showColorPicker'}] = function(${wordsWithCommas}) {
-                var ${wordsWithCommas};
-                ${word}[${'style'}][${'backgroundColor'}] = ${word}[${'numToHex'}](${word});
-                ${word} = ${ms('hexConverter')}${word}${me}(${ms('startHexValue')}${word}${me});
-                ${ms('hue')}${word}${me} = ${word}[${'hue'}];
-                ${ms('brightness')}${word}${me} = ${word}[${'brightness'}];
-                ${ms('saturation')}${word}${me} = ${word}[${'saturation'}];
-                ${word} = ${word};
-                ${word} = ${word};
-                ${word} = ${word};${entry('#setColorPickerValue')}
+                var ${word} = [arguments];
+${line}
+${line}
+                ${ms('hue')}${arrAccess}${me} = ${arrAccess}[${'hue'}];
+                ${ms('brightness')}${arrAccess}${me} = ${arrAccess}[${'brightness'}];
+                ${ms('saturation')}${arrAccess}${me} = ${arrAccess}[${'saturation'}];
+${line}
+${line}
+${line}${entry('#setColorPickerValue')}
                 ${ms('refresh')}${word}${me}();`;
-            // this["showColorPicker" /*O7J.w63(2015)*/ ] = function(W34, I34, X34, g34) {
-            //     var b34;
-            //     u0c["style" /*O7J.t63(844)*/ ]["backgroundColor" /*O7J.w63(2722)*/ ] = G["numToHex" /*O7J.w63(3465)*/ ](W34);
-            //     b34 = w0c(W34);
-            //     f0c = b34["hue" /*O7J.w63(2357)*/ ];
-            //     h0c = b34["brightness" /*O7J.w63(2974)*/ ];
-            //     T0c = b34["saturation" /*O7J.w63(1619)*/ ];
-            //     e0c = X34;
-            //     U0c = g34;
-            //     C0c = W34;
-            //     Q0c();
-            //     a0c(I34);
-            //     q0c["style" /*O7J.w63(844)*/ ]["display" /*O7J.w63(1722)*/ ] = "block" /*O7J.t63(192)*/ ;
-            // };
+            // this["showColorPicker" /*v5y.c25(981)*/ ] = function(j6a, G6a, F6a, S6a) {
+            //     var j0B = [arguments];
+            //     b0B[9]["style" /*v5y.d25(3184)*/ ]["backgroundColor" /*v5y.d25(2631)*/ ] = m9B[24]["numToHex" /*v5y.d25(73)*/ ](j0B[0][0]);
+            //     j0B[8] = Y2Y(j0B[0][0]);
+            //     b0B[55] = j0B[8]["hue" /*v5y.c25(2521)*/ ];
+            //     b0B[80] = j0B[8]["brightness" /*v5y.d25(1916)*/ ];
+            //     b0B[17] = j0B[8]["saturation" /*v5y.c25(2002)*/ ];
+            //     b0B[26] = j0B[0][2];
+            //     b0B[22] = j0B[0][3];
+            //     b0B[52] = j0B[0][0];
+            //     n9Y();
             c.locations['#insertHexColorPickerHere'](
                 (m) => `
 const view = {
@@ -77,25 +75,17 @@ epp.plugins.hexcolor.insertHexColorPicker(view);`
             );
             $`
             function ${delayed(() => c.matches.refresh)}() {${entry('#refresh')}
-                var ${wordsWithCommas};
+                var ${word} = [arguments];
 ${line}
 ${line}
-${line}
-${line}
-${line}
-${line}
-                    ${word}[${'style'}][${'backgroundColor'}] = ${ms(
+                ${arrAccess}[${'style'}][${'backgroundColor'}] = ${ms(
                 'hsbConverter'
-            )}${word}${me}(${word}, ${word}, ${word});`;
-            // function Q0c() {
-            //     var Y1c, g74, V74, S74;
-            //     Y1c = true;
-            //     g74 = 1309324817;
-            //     V74 = -1327364818;
-            //     S74 = 2;
-            //     for (var I74 = 1; O7J.h0A(I74.toString(), I74.toString().length, 14763) !== g74; I74++) {
-            //         N0c(f0c, T0c, h0c, Y1c);
-            //         n0c["style" /*O7J.t63(844)*/ ]["backgroundColor" /*O7J.t63(2722)*/ ] = o0c(f0c, T0c, h0c);
+            )}${word}${me}(${arrAccess}, ${arrAccess}, ${arrAccess});`;
+            // function n9Y() {
+            //     var u0B = [arguments];
+            //     u0B[7] = true;
+            //     X2Y(b0B[55], b0B[17], b0B[80], u0B[7]);
+            //     b0B[4]["style" /*v5y.c25(3184)*/ ]["backgroundColor" /*v5y.c25(2631)*/ ] = j2Y(b0B[55], b0B[17], b0B[80]);
             c.locations['#refresh'](
                 (m) => `
 let res = ${m.hsbConverter}(${m.hue}, ${m.saturation}, ${m.brightness})
