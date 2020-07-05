@@ -16,12 +16,15 @@ export default (epp) =>
             const wordsWithCommas = _('(?:\\w+, )*\\w+');
             const line = _('[^\\n]+');
             const arrAccess = _('\\w+\\[\\d+\\]');
+            const argsAccess = _('\\w+\\[0\\]\\[\\d+\\]');
 
             $`${entry('#insertHexColorPickerHere')}
             this[${'showColorPicker'}] = function(${wordsWithCommas}) {
                 var ${word} = [arguments];
-${line}
-${line}
+                ${arrAccess}[${'style'}][${'backgroundColor'}] = ${arrAccess}[${'numToHex'}](${ms(
+                'startHexValue'
+            )}${argsAccess}${me});
+                ${arrAccess} = ${ms('hexConverter')}${word}${me}(${argsAccess});
                 ${ms('hue')}${arrAccess}${me} = ${arrAccess}[${'hue'}];
                 ${ms('brightness')}${arrAccess}${me} = ${arrAccess}[${'brightness'}];
                 ${ms('saturation')}${arrAccess}${me} = ${arrAccess}[${'saturation'}];
@@ -70,9 +73,7 @@ const view = {
 };
 epp.plugins.hexcolor.insertHexColorPicker(view);`
             );
-            c.locations['#setColorPickerValue'](
-                (m) => `epp.plugins.hexcolor.setColorPickerValue(view, ${m.startHexValue})`
-            );
+            c.locations['#setColorPickerValue']((m) => `epp.plugins.hexcolor.setColorPickerValue(${m.startHexValue})`);
             $`
             function ${delayed(() => c.matches.refresh)}() {${entry('#refresh')}
                 var ${word} = [arguments];
@@ -136,7 +137,7 @@ document.getElementById('hexColorPicker').value = '#' + res.join('');
                 };
                 setInputFilter(input, (value) => /^#[0-9a-f]*$/i.test(value));
             };
-            c.setColorPickerValue = (x, start) => {
+            c.setColorPickerValue = (start) => {
                 input.value = '#' + start.toString(16);
             };
         },

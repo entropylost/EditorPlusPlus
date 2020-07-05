@@ -94,10 +94,9 @@ function injectMain(src) {
             const pairings = getStorage('pairings');
 
             const test = scanSource(src);
-
             if (
                 bundleName !== test.bundleName ||
-                bundleFunctionAliases !== test.bundleFunctionAliases ||
+                JSON.stringify(bundleFunctionAliases) !== JSON.stringify(test.bundleFunctionAliases) ||
                 pairings == null
             ) {
                 fallback = true;
