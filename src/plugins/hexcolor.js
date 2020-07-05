@@ -93,7 +93,6 @@ let res = ${m.hsbConverter}(${m.hue}, ${m.saturation}, ${m.brightness})
     .slice(4, -1)
     .split(',')
     .map(x => parseInt(x).toString(16).padStart(2, '0'));
-if (res.every(x => x[0] === x[1])) res = res.map(x => x[0]);
 document.getElementById('hexColorPicker').value = '#' + res.join('');
 `
             );

@@ -50,10 +50,10 @@ export default (epp) =>
                 elements.push(
                     theme.checkbox(
                         plugin.name,
-                        () => {
-                            if (plugin.activated) {
-                                plugin.deactivate();
-                            } else plugin.activate();
+                        (x) => {
+                            if (x) {
+                                plugin.activate();
+                            } else plugin.deactivate();
                         },
                         plugin.activated
                     )

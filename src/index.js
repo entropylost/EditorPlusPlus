@@ -231,23 +231,27 @@ function plugin(data) {
         hide: data.hide || (() => {}),
         hidden: data.hidden || false,
         activated: false,
+        type: 'compile',
     };
     plugins[data.id] = plugin;
 
-    function setPluginActivate(value = plugin.activated) {
+    function setPluginActivate(value = true) {
+        plugin.activated = value;
         activatedPlugins[plugin.id] = value;
         setStorage('activatedPlugins', activatedPlugins);
     }
 
     function activateDependencies(plugin) {
+        if (plugin.type === 'compile') throw new Error('Invalid Plugin Activated');
         const dep = [];
         for (let x of plugin.dependencies) {
-            if (plugins[x] == null)
-                epp.theme.error(`Can not activate ${plugin.name}, this installation is missing ${x}.`);
-            if (plugins[x].type === 'compile' && !plugins[x].activated)
-                epp.theme.error(`Can not activate ${plugin.name} as ${x} is not activated`);
-            plugins[x].activate();
-            activateDependencies(plugins[x]);
+            if (plugins[x] == null) return `Can not activate ${plugin.name}, this installation is missing ${x}.`;
+            if (plugins[x].type === 'compile') {
+                if (!plugins[x].activated) return `Can not activate ${plugin.name} as ${x} is not activated`;
+            } else {
+                const a = plugins[x].activate();
+                if (typeof a === 'string') return a;
+            }
             dep.push(plugins[x]);
         }
         return dep;
@@ -257,7 +261,6 @@ function plugin(data) {
         for (let x in plugins) {
             if (plugins[x].dependencies.includes(plugin.id)) {
                 plugins[x].deactivate();
-                deactivateDependents(plugins[x]);
             }
         }
     }
@@ -267,30 +270,32 @@ function plugin(data) {
 
         plugin.activate = (delay = false) => {
             if (plugin.activated) return;
-            plugin.activated = true;
             const dep = activateDependencies(plugin);
+            if (typeof dep === 'string') {
+                setPluginActivate(false);
+                alert(dep);
+                return dep;
+            }
             setPluginActivate();
+            if (dep == null) return;
             if (data.activate) data.activate(plugin, ...dep);
             if (epp.theme != null && !delay) plugin.display(plugin);
         };
         plugin.deactivate = () => {
             if (!plugin.activated) return;
             if (epp.theme != null) plugin.hide(plugin);
-            plugin.activated = false;
             deactivateDependents(plugin);
             setPluginActivate(false);
             if (data.deactivate) data.deactivate(plugin, ...plugin.dependencies.map((x) => plugins[x]));
         };
     } else if (activatedPlugins[plugin.id]) {
-        plugin.type = 'compile';
-
         const dependencies = plugin.dependencies;
         if (dependencies.length !== 0) {
             let isActivated = false;
             delayed.push(() => {
                 if (isActivated) return;
                 for (const x of dependencies) {
-                    if (plugins[x] == null) return;
+                    if (plugins[x] == null || !plugins[x].activated) return;
                 }
                 isActivated = true;
                 injector(
@@ -311,6 +316,9 @@ function plugin(data) {
 function injector(plugin, f, extra = []) {
     if (plugin.activated) return;
     plugin.activated = true;
+    activatedPlugins[plugin.id] = true;
+    setStorage('activatedPlugins', activatedPlugins);
+
     plugin.locations = Object.create(null);
     plugin.matches = Object.create(null);
 
