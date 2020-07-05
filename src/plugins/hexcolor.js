@@ -131,8 +131,6 @@ document.getElementById('hexColorPicker').value = '#' + res.join('');
                 input.oninput = () => {
                     if (/^#[0-9a-f]{6}$/i.test(input.value)) {
                         setNumber(x, parseInt(input.value.substr(1), 16));
-                    } else if (/^#[0-9a-f]{3}$/i.test(input.value)) {
-                        setNumber(x, parseInt(input.value.substr(1).replace(/./g, '$&$&'), 16));
                     }
                 };
                 setInputFilter(input, (value) => /^#[0-9a-f]*$/i.test(value));

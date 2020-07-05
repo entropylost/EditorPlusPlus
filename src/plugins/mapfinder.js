@@ -4,7 +4,6 @@ export default (epp) =>
         dependencies: [],
         init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
             const word = _('\\w+');
-            const wordsWithCommas = _('(?:\\w+, )*\\w+');
             const line = _('[^\\n]+');
             const arrAccess = _('\\w+\\[\\d+\\]');
             const argsAccess = _('\\w+\\[0\\]\\[\\d+\\]');
@@ -13,11 +12,9 @@ export default (epp) =>
             function ${ms('refresh')}${word}${me}(${word}) {
                 var ${word} = [arguments];
                 ${arrAccess} = ${ms('map')}${arrAccess}${me}[${'physics'}][${'bodies'}][${arrAccess}];`;
-            /*
-            function ${ms('refresh')}${word}${me}(${word}) {
-                var ${word}, ${word}, ${word};
-                ${word} = ${ms('map')}${word}${me}[${'physics'}][${'bodies'}][${word}];`;
-            */
+            // function A4h(b96) {
+            //     var g0a = [arguments];
+            //     g0a[8] = o9a[2]["physics" /*v5y.c25(856)*/ ]["bodies" /*v5y.c25(10)*/ ][o9a[47]];
 
             c.locations['#physicsIntercept'](
                 (m) => `
