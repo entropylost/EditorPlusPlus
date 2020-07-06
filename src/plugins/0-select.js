@@ -1,8 +1,4 @@
 let platforms;
-let button;
-let active = false;
-let handler;
-let activated = false;
 
 function refreshPlatforms() {
     if (document.getElementById('mapeditor_leftbox_platformtable') != null)
@@ -13,52 +9,34 @@ export default (epp) =>
     epp.plugin({
         id: 'select',
         dependencies: ['mapfinder'],
-        allowReloading: true,
-        display() {
-            const { theme } = epp;
-            if (button) theme.pages.editor.remove(button);
-            button = theme.button({
-                type: 'ghost',
-                text: 'Toggle Selection',
-                toggle: true,
-                click: (activated) => {
-                    refreshPlatforms();
-                    if (!activated) {
-                        epp.plugins.select.length = 0;
-                        if (platforms != null)
-                            for (const x of platforms) {
-                                x.classList.remove('platform-selected');
-                            }
-                    }
-                    active = activated;
-                },
-            });
-            theme.pages.editor.append(button);
-        },
-        hide() {
-            const { theme } = epp;
-            theme.pages.editor.remove(button);
-        },
-        activate(c, mf) {
+        init(c, mf) {
             c.select = [];
-            if (!activated) import('./select.styl');
-            activated = true;
-            handler = (o, n) => {
-                if (!active) return;
+            import('./select.styl');
+            mf.locations.platformclick(
+                (m) => `
+if (epp && epp.plugins && epp.plugins.select) {
+    if (arguments[0].shiftKey) {
+        epp.plugins.select.update(${m.index});
+    } else {
+        epp.plugins.select.disable();
+    }
+}
+                `
+            );
+            c.update = (n) => {
                 refreshPlatforms();
                 if (platforms == null) return;
-                if (c.select.includes(o)) {
-                    platforms[o].classList.add('platform-selected');
-                }
                 if (!c.select.includes(n)) {
                     c.select.push(n);
                     platforms[n].classList.add('platform-selected');
                 }
             };
-            mf.onPlatformChange.push(handler);
-        },
-        deactivate(_, mf) {
-            const i = mf.onPlatformChange.indexOf(handler);
-            if (i !== -1) mf.onPlatformChange.splice(i, 1);
+            c.disable = () => {
+                c.select = [];
+                if (platforms != null)
+                    for (const x of platforms) {
+                        x.classList.remove('platform-selected');
+                    }
+            };
         },
     });

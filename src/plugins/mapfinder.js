@@ -24,7 +24,7 @@ export default (epp) =>
             $`
                         ${arrAccess} = ${arrAccess}[${'insertRow'}]();
 ${line}
-                        ${arrAccess}[${'onclick'}] = function() {${entry('#platformclick')}
+                        ${arrAccess}[${'onclick'}] = function() {${entry('platformclick')}
                             var ${word} = [arguments];
                             ${word}(${arrAccess}[${'physics'}][${'bro'}][${ms('index')}${argsAccess}${me}]);`;
             // n1a[1] = o9a[86]["insertRow" /*v5y.c25(2357)*/ ]();
@@ -33,7 +33,7 @@ ${line}
             //     var X1a = [arguments];
             //     i0Y(o9a[2]["physics" /*v5y.c25(856)*/ ]["bro" /*v5y.d25(3405)*/ ][n1a[0][0]]);
 
-            c.locations['#platformclick'](
+            c.locations.platformclick(
                 (m) => `
 if (epp != null && epp.plugins != null && epp.plugins.mapfinder != null) {
     if (Array.isArray(epp.plugins.mapfinder.onPlatformChange)) epp.plugins.mapfinder.onPlatformChange.forEach((f) => f(epp.plugins.mapfinder.currentPlatformIndex, ${m.index}));

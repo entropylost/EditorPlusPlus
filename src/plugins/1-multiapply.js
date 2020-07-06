@@ -28,7 +28,6 @@ export default (epp) =>
             document.querySelectorAll('.multiapplyoption').forEach((x) => x.parentNode.removeChild(x));
         },
         activate(c, sel, mf) {
-            console.log('Activating multiapply');
             const none = {
                 name: 'None',
                 from: () => {},
