@@ -1,8 +1,7 @@
 let platforms;
 
 function refreshPlatforms() {
-    if (document.getElementById('mapeditor_leftbox_platformtable') != null)
-        platforms = document.getElementById('mapeditor_leftbox_platformtable').firstElementChild.children;
+    platforms = document.getElementById('mapeditor_leftbox_platformtable').firstElementChild.children;
 }
 
 export default (epp) =>
@@ -24,11 +23,17 @@ if (epp && epp.plugins && epp.plugins.select) {
                 `
             );
             c.update = (n) => {
+                if (mf.lastPlatformIndex == null) c.disable();
+                const o = mf.lastPlatformIndex;
                 refreshPlatforms();
                 if (platforms == null) return;
                 if (!c.select.includes(n)) {
                     c.select.push(n);
                     platforms[n].classList.add('platform-selected');
+                }
+                if (o != null && !c.select.includes(o)) {
+                    c.select.push(o);
+                    platforms[o].classList.add('platform-selected');
                 }
             };
             c.disable = () => {

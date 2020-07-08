@@ -126,7 +126,6 @@ document.getElementById('hexColorPicker').value = '#' + res.join('');
             const input = epp.$.input('hexColorPicker', { type: 'text' }, []);
             before.parentElement.insertBefore(input, before);
             c.insertHexColorPicker = (x) => {
-                console.log(x);
                 input.oninput = () => {
                     if (/^#[0-9a-f]{6}$/i.test(input.value)) {
                         setNumber(x, parseInt(input.value.substr(1), 16));

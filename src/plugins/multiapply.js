@@ -9,18 +9,14 @@ export default (epp) =>
         display(c) {
             c.hide();
             const names = {
-                number: 'Numbers:',
-                boolean: 'Toggles:',
-                string: 'Move Type:',
+                number: ['Numbers:', 'Numeric values such as density, friction, and position.'],
+                boolean: ['Booleans:', 'Values which are either on or off (friction, collide with).'],
             };
             for (const [k, v] of Object.entries(c.modes)) {
-                const r = epp.theme.radio(
-                    v.map((a) => a.name),
-                    (i) => (c.mode[k] = v[i]),
-                    0
-                );
+                const r = epp.theme.toggle(names[k][0], (active) => {
+                    
+                }, true, names[k][1]);
                 r.classList.add('multiapplyoption');
-                epp.theme.pages.editor.append(epp.$.div({ className: 'multiapplyoption' }, names[k]));
                 epp.theme.pages.editor.append(r);
             }
         },
@@ -35,11 +31,6 @@ export default (epp) =>
                     return previous;
                 },
             };
-            const set = {
-                name: 'Override',
-                from: (x) => x,
-                to: (x) => x,
-            };
 
             const numberModes = [
                 none,
@@ -49,51 +40,32 @@ export default (epp) =>
                         return current - previous;
                     },
                     to(diff, previous) {
-                        console.log(diff);
                         return diff + previous;
                     },
                 },
-                set,
             ];
             const xor = (a, b) => a !== b;
             const booleanModes = [
                 none,
                 {
-                    name: 'Or',
-                    from: (x) => x,
-                    to(diff, previous) {
-                        return diff || previous;
-                    },
-                },
-                {
-                    name: 'And',
-                    from: (x) => x,
-                    to(diff, previous) {
-                        return diff && previous;
-                    },
-                },
-                {
                     name: 'Xor',
                     from: xor,
                     to: xor,
                 },
-                set,
             ];
-            const stringModes = [none, set];
             c.modes = {
                 number: numberModes,
                 boolean: booleanModes,
-                string: stringModes,
             };
 
-            c.mode = {};
-
-            for (const [k, v] of Object.entries(c.modes)) {
-                c.mode[k] = v[0];
-            }
+            c.mode = {
+                number: numberModes[1],
+                boolean: booleanModes[1],
+            };
 
             const disallowed = { n: true, fx: true };
             function initIndex(index) {
+                if (index == null) return;
                 const bindex = mf.map().physics.bro[index];
                 let last = JSON.parse(JSON.stringify(mf.map().physics.bodies[bindex]));
                 handler = () => {
@@ -125,7 +97,6 @@ export default (epp) =>
                         return c.mode[typeof n].from(o, n);
                     }
                     const diff = difference(next, last);
-                    console.log(diff);
                     let hasDiffed = false;
                     function diffAllKeys(diff, out, key) {
                         const value = out[key];
@@ -139,7 +110,6 @@ export default (epp) =>
                             }
                             return;
                         }
-                        console.log(value);
                         out[key] = c.mode[typeof value].to(diff, value);
                         hasDiffed = true;
                     }

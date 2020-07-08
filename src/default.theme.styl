@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap')
 
+@import './truncate.styl'
+
 @font-face
     font-family: "Bahnschrift";
     src: url("fonts/Bahnschrift.woff2") format("woff2")
@@ -14,19 +16,11 @@ primary = #FFF
 secondary = #121A22
 dimmed = #999
 
-truncate-right(width, height, size)
-    clip-path: polygon(0% 0%, "calc(%s - %s)" % (width size) 0%, width size, width "calc(%s - %s)" % (height size), "calc(%s - %s)" % (width size) height, 0% height)
-
-truncate-left(width, height, size)
-    clip-path: polygon(size 0%, width 0%, width height, size height, 0% "calc(%s - %s)" % (height size), 0% size)
-
-truncate(width, height, size)
-    clip-path: polygon(size 0%, "calc(%s - %s)" % (width size) 0%, width size, width "calc(%s - %s)" % (height size), "calc(%s - %s)" % (width size) height, size height, 0% "calc(%s - %s)" % (height size), 0% size)
 
 #container
     position: fixed
     left: 0
-    top: 20vh
+    top: 15vh
     truncate-right(100%, tsSize, 0.4rem)
     transition: width buttonTime, clip-path openTime
 
@@ -217,17 +211,24 @@ truncate(width, height, size)
             left: 0%
             .back-arrow
                 background: #FFF
-    .page-title
+    .page-title-interior
         position: relative
         font-weight: bold
         text-align: center
         padding: 0.2em
         user-select: none
         box-sizing: border-box
-        width: extendedSize
         margin: 0.1em 0
-    .page-interior
+    .page-title
         width: extendedSize
+    .page-interior
+        max-height: "calc(70vh - %s)" % tsSize
+        overflow: auto
+        width: extendedSize
+        box-sizing: border-box
+        text-indent: 0.5em
+    .page-interior > *
+        text-indent: 0em
     .page-interior.no-title
         margin-top: 0.4em
 
@@ -355,9 +356,10 @@ page-ar()
     padding: 0.5em
     border-radius: 0.3em
     cursor: pointer
-    min-width: 1.5em
-    margin: 0.3em 0
+    min-width: 2.5em
+    margin: 0.3em 0.3em
     text-align: center
+    box-sizing: border-box
 
     buttonShadow()
         return unquote("1px 1px 2px var(--button-shadow), 2px 2px 4px var(--button-shadow), 3px 3px 8px var(--button-shadow), 4px 4px 16px var(--button-shadow)")
@@ -372,8 +374,14 @@ page-ar()
     &.button-ghost
         color: var(--button-primary)
         background: var(--button-secondary)
+        box-shadow: inset 0px 0px 0px 1px var(--button-primary), buttonShadow()
         transition: color buttonTime, background buttonTime, box-shadow buttonTime
-        box-shadow: inset 0px 0px 0px 1px var(--button-primary), buttonShadow();
+    &.button-ternary
+        margin: 0.3em 0
+        padding: 0.2em
+        border-radius: 0
+        color: var(--button-ternary)
+        transition: color buttonTime, background buttonTime
 
     &.button-fill:hover, &.button-fill.button-activated
         filter: brightness(90%)
@@ -383,16 +391,54 @@ page-ar()
     &.button-ghost:not(.button-toggle):hover, &.button-ghost.button-activated
         background: var(--button-primary)
         color: var(--button-secondary)
+    &.button-ternary:not(.button-toggle):hover, &.button-ternary.button-activated
+        color: var(--button-primary)
+        background: var(--button-secondary)
 
     &.button-inline
         display: inline
-    &:not(.button-inline)
-        display: inline-block
-        position: relative
-        left: 50%
-        transform: translateX(-50%)
     &.button-fill:active
         transition-property: none
         filter: brightness(80%)
     &.button-ghost:active
         filter: brightness(80%)
+
+.toggle-container
+    text-indent: 0.5em
+
+    padding: 0.2em 0
+
+    .toggle-label
+        display: block
+        cursor: pointer
+        .toggle-interior
+            position: relative
+            &::before
+                content: '';
+                position: absolute
+                left: calc(100% + 0.5em)
+                background: #FFF4
+                width: 1em
+                height: 0.35em
+                border-radius: 99999px
+                top: 50%
+                transform: translateY(-50%)
+                transition: background buttonTime
+            &::after
+                content: '';
+                position: absolute
+                left: calc(100% + 0.5em)
+                background: dimmed
+                width: 0.7em
+                height: 0.7em
+                top: 50%
+                transform: translate(-50%, -50%)
+                truncate(100%, 100%, 0.2em)
+                transition: left buttonTime, background buttonTime
+        &:hover .toggle-interior::after
+            background: #BBB
+        &:hover .toggle-interior::before
+            background: #FFF6
+    .hidden:checked + .toggle-label .toggle-interior::after
+            background: primary
+            left: calc(100% + 1.5em)

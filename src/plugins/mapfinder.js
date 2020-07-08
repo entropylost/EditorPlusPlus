@@ -8,8 +8,10 @@ export default (epp) =>
             const arrAccess = _('\\w+\\[\\d+\\]');
             const argsAccess = _('\\w+\\[0\\]\\[\\d+\\]');
 
+            c.lastInitValid = false;
+
             $`${entry('#physicsIntercept')}
-            function ${ms('refresh')}${word}${me}(${word}) {
+            function ${ms('refresh')}${word}${me}(${word}) {${entry('#beforeRefresh')}
                 var ${word} = [arguments];
                 ${arrAccess} = ${ms('map')}${arrAccess}${me}[${'physics'}][${'bodies'}][${arrAccess}];`;
             // function A4h(b96) {
@@ -20,6 +22,18 @@ export default (epp) =>
                 (m) => `
                 epp.plugins.mapfinder.map = () => ${m.map};
                 epp.plugins.mapfinder.refresh = (x) => ${m.refresh}(x)`
+            );
+            c.locations['#beforeRefresh'](
+                () => `
+if (epp != null && epp.plugins != null && epp.plugins.mapfinder != null) {
+    if (!epp.plugins.mapfinder.lastInitValid) {
+        if (Array.isArray(epp.plugins.mapfinder.onPlatformChange))
+            epp.plugins.mapfinder.onPlatformChange.forEach((f) => f(epp.plugins.mapfinder.currentPlatformIndex, undefined));
+        epp.plugins.mapfinder.currentPlatformIndex = undefined;
+        epp.plugins.mapfinder.lastPlatformIndex = undefined;
+    }
+    epp.plugins.mapfinder.lastInitValid = false;
+}`
             );
             $`
                         ${arrAccess} = ${arrAccess}[${'insertRow'}]();
@@ -36,11 +50,13 @@ ${line}
             c.locations.platformclick(
                 (m) => `
 if (epp != null && epp.plugins != null && epp.plugins.mapfinder != null) {
+    epp.plugins.mapfinder.lastInitValid = true;
     if (Array.isArray(epp.plugins.mapfinder.onPlatformChange)) epp.plugins.mapfinder.onPlatformChange.forEach((f) => f(epp.plugins.mapfinder.currentPlatformIndex, ${m.index}));
+    epp.plugins.mapfinder.lastPlatformIndex = epp.plugins.mapfinder.currentPlatformIndex;
     epp.plugins.mapfinder.currentPlatformIndex = ${m.index};
 }`
             );
-            c.onPlatformChange = [console.log];
+            c.onPlatformChange = [];
 
             $`${entry('#redraw')}
             function ${word}() {
@@ -67,6 +83,6 @@ setTimeout(() => {
     }
 }, 0);`
             );
-            c.onRedraw = [console.log];
+            c.onRedraw = [];
         },
     });

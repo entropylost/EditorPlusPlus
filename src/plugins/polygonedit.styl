@@ -1,0 +1,51 @@
+.vertex-display
+    white-space: nowrap
+.vertex-button
+    padding-top: 5px
+    padding-bottom: 5px
+.vertex-close
+    position: relative
+    left: -35px
+    display: inline-block
+    height: 15px
+    width: 15px
+    transform: translateY(5%)
+    padding: 0px
+    margin-right: -15px
+    border: none
+    &::before, &::after
+        position: absolute
+        left: calc(50% - 1px)
+        content: ''
+        height: calc(1.414 * 100% - 6px)
+        width: 1px
+        background: #FFF
+    &::before
+        transform: rotate(45deg)
+    &::after
+        transform: rotate(-45deg)
+.vertex-display
+    position: relative
+    display: none
+.vertex.vertex-displayed ~ .vertex-display
+    display: revert
+.vertex-add
+    position: absolute
+    right: 3px
+    top: 0%
+    width: 13px
+    height: 13px
+    padding: 0px
+    margin: 0px
+    cursor: pointer
+    transform: translateY(-50%)
+
+    &::before, &::after
+        position: absolute
+        left: calc(50%)
+        content: ''
+        height: 100%
+        width: 1px
+        background: #000
+    &::after
+        transform: rotate(90deg)

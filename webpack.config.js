@@ -21,6 +21,10 @@ module.exports = {
                     'stylus-loader',
                 ],
             },
+            {
+                test: /\.css$/,
+                use: [{ loader: 'style-loader', options: { attributes: { class: 'insertStyle' } } }, 'css-loader'],
+            },
             { test: /\.svg$/, loader: 'svg-inline-loader' },
             {
                 test: /\.(png|jpg|gif|woff|woff2)$/i,

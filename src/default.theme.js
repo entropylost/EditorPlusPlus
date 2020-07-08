@@ -1,3 +1,7 @@
+import 'overlayscrollbars/css/OverlayScrollbars.css';
+import './os-theme-block-light.css';
+import OverlayScrollbars from 'overlayscrollbars/';
+
 function activate(epp) {
     const { $, theme } = epp;
     import('./default.theme.styl');
@@ -33,7 +37,10 @@ function activate(epp) {
 
         let pageTitle = null;
 
-        if (name !== '') {
+        let pageInterior = $.div['page-interior'](elements);
+
+        if (name === '') pageInterior.classList.add('no-title');
+        else {
             const back = $.div['back-button'](
                 {
                     onclick() {
@@ -57,13 +64,11 @@ function activate(epp) {
                 $.div['back-arrow']([])
             );
 
-            pageTitle = $.div['page-title'](root ? [name] : [back, name]);
-            elements.unshift(theme.seperator());
+            pageTitle = $.div['page-title']([
+                $.div['page-title-interior'](root ? [name] : [back, name]),
+                theme.seperator(),
+            ]);
         }
-
-        const pageInterior = $.div['page-interior'](elements);
-
-        if (name === '') pageInterior.classList.add('no-title');
 
         const page = $.div.page(pageTitle == null ? pageInterior : [pageTitle, pageInterior]);
 
@@ -74,15 +79,25 @@ function activate(epp) {
 
         interior.appendChild(page);
 
-        theme.pages[id] = {
+        OverlayScrollbars(pageInterior, {
+            className: 'os-theme-block-light',
+        });
+
+        pageInterior = OverlayScrollbars(pageInterior).getElements().content;
+
+        pageInterior.style.visibility = 'inherit';
+
+        const pg = {
+            id,
+            name,
+            element: page,
+            interior: pageInterior,
             append(...elems) {
                 for (const x of elems) {
                     if (typeof x === 'string') pageInterior.appendChild(document.createTextNode(x));
                     else pageInterior.appendChild(x);
                 }
             },
-            name,
-            element: page,
             clear() {
                 pageInterior.innerHTML = '';
             },
@@ -94,11 +109,13 @@ function activate(epp) {
                 theme.pages[id] = undefined;
             },
         };
+        theme.pages[id] = pg;
 
-        return page;
+        return pg;
     };
 
-    theme.next = (name, page, image) => {
+    theme.next = (name, pg, image) => {
+        const page = pg.element;
         const arrow = $.div['forward-arrow']([]);
         let svg = '';
         if (image != null) {
@@ -203,6 +220,7 @@ function activate(epp) {
         click,
         primary = '#FFFFFF',
         secondary = '#121A22',
+        ternary = primary,
         inline = false,
         toggle = false,
     }) => {
@@ -215,11 +233,12 @@ function activate(epp) {
                     click();
                 }
             },
-            style: `--button-primary: ${primary}; --button-secondary: ${secondary}; --button-shadow: ${primary}11`,
+            style: `--button-primary: ${primary}; --button-secondary: ${secondary}; --button-shadow: ${primary}11; --button-ternary: ${ternary}`,
         })(text);
         const typeClass = {
             fill: 'button-fill',
             ghost: 'button-ghost',
+            ternary: 'button-ternary',
         }[type];
         if (typeClass == null) theme.error('Invalid Button Type');
         button.classList.add(typeClass);
@@ -231,6 +250,23 @@ function activate(epp) {
     theme.clear = () => {
         interior.innerHTML = '';
         interior.appendChild(rootPage);
+    };
+
+    theme.toggle = (text, cb, checked = false, tooltip = '') => {
+        const group = `${Math.random()}`;
+        const label = $.label['toggle-label']({ htmlFor: group, title: tooltip }, [$.span['toggle-interior']([text])]);
+        const input = $.input.hidden(
+            {
+                type: 'checkbox',
+                id: group,
+                checked,
+                onchange() {
+                    cb(input.checked);
+                },
+            },
+            []
+        );
+        return $.div['toggle-container']([input, label]);
     };
 
     theme.page('root', 'Settings', []);

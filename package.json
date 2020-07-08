@@ -19,6 +19,7 @@
     "dependencies": {
         "@implode-nz/html": "^6.0.0",
         "js-beautify": "^1.11.0",
+        "overlayscrollbars": "^1.12.0",
         "webextension-polyfill": "^0.6.0"
     },
     "devDependencies": {

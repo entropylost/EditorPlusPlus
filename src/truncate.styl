@@ -1,0 +1,8 @@
+truncate-right(width, height, size)
+    clip-path: polygon(0% 0%, "calc(%s - %s)" % (width size) 0%, width size, width "calc(%s - %s)" % (height size), "calc(%s - %s)" % (width size) height, 0% height)
+
+truncate-left(width, height, size)
+    clip-path: polygon(size 0%, width 0%, width height, size height, 0% "calc(%s - %s)" % (height size), 0% size)
+
+truncate(width, height, size)
+    clip-path: polygon(size 0%, "calc(%s - %s)" % (width size) 0%, width size, width "calc(%s - %s)" % (height size), "calc(%s - %s)" % (width size) height, size height, 0% "calc(%s - %s)" % (height size), 0% size)

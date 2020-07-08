@@ -3,6 +3,8 @@ export default (epp) =>
         id: 'polygonedit',
         dependencies: ['mapfinder'],
         init(c, mf, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
+            import('./polygonedit.styl');
+
             const lines = _('(?:\\n                        [^\\n]*)*');
             const arrAccess = _('\\w+\\[\\d+\\]');
             $`
@@ -15,80 +17,124 @@ export default (epp) =>
                 'polygon'
             )}${arrAccess}${me}[${'s'}]));${entry('#polygonInsert')}
                     }`;
+            // } else if (Q0a[2]["type" /*v5y.c25(1005)*/ ] == "po" /*v5y.d25(3261)*/ ) {
+            //     Q0a[87] = "Yes" /*v5y.d25(2331)*/ ;
+            //     if (Q0a[86]) {
+            //         Q0a[87] = "No" /*v5y.c25(3355)*/ ;
+            //     }
+            //     s1h(Q0a[3], "Convex" /*v5y.c25(2037)*/ , {
+
             c.locations['#polygonInsert'](
                 (m) => `
 ${m.pComplete} = false;
-epp.plugins.polygonedit.addVertexEditor(${m.polygon}, ${m.root});
+epp.plugins.polygonedit.addVertexEditor(${m.polygon}, ${m.root}.firstChild);
 `
             );
 
             c.addVertexEditor = (shape, root) => {
                 const { $ } = epp;
 
-                let displayed = false;
+                root.querySelectorAll('.vertex-display').forEach((x) => root.removeChild(x));
 
-                const vertex = $.tr([
-                    $.td.mapeditor_rightbox_table_leftcell(['Vertexies:']),
-                    $.td.mapeditor_rightbox_table_leftcell(
-                        $.div.mapeditor_rightbox_table_shape_pm(
+                function create(d, a, i) {
+                    return $.td.mapeditor_rightbox_table_leftcell([
+                        d,
+                        $.input.mapeditor_field.mapeditor_field_spacing_bodge.fieldShadow(
                             {
-                                style: {
-                                    paddingTop: '5px',
-                                    paddingBottom: '5px',
-                                },
-                                onclick() {
-                                    displayed = !displayed;
-                                    let display = 'revert';
-                                    if (displayed) {
-                                        this.innerText = '-';
-                                    } else {
-                                        this.innerText = '+';
-                                        display = 'none';
+                                type: 'text',
+                                oninput() {
+                                    const p = parseInt(this.value);
+                                    if (!isNaN(p)) {
+                                        a[i] = p;
+                                        mf.redraw();
                                     }
-                                    root.firstChild
-                                        .querySelectorAll('.vertex-display')
-                                        .forEach((x) => (x.style.display = display));
                                 },
+                                value: a[i],
                             },
-                            ['+']
-                        )
-                    ),
-                ]);
+                            []
+                        ),
+                    ]);
+                }
 
-                function generateVertex(index) {
-                    function create(d, i) {
-                        return $.td.mapeditor_rightbox_table_leftcell([
-                            d,
-                            $.input.mapeditor_field.mapeditor_field_spacing_bodge.fieldShadow(
-                                {
-                                    type: 'text',
-                                    oninput() {
-                                        const p = parseInt(this.value);
-                                        if (!isNaN(p)) {
-                                            shape.v[index][i] = p;
-                                        }
-                                    },
-                                    value: shape.v[index][i],
-                                },
-                                []
-                            ),
-                        ]);
+                function createAddButton(index) {
+                    const location = [0, 0];
+                    if (shape.v.length === 1) {
+                        location[0] = shape.v[0][0];
+                        location[1] = shape.v[0][1];
+                    } else if (shape.v.length !== 0) {
+                        const i2 = (index + 1) % shape.v.length;
+                        location[0] = (shape.v[index][0] + shape.v[i2][0]) / 2;
+                        location[1] = (shape.v[index][1] + shape.v[i2][1]) / 2;
                     }
-
-                    return $.tr['vertex-display'](
+                    return $.td['vertex-add'](
                         {
-                            style: {
-                                display: 'none',
-                                whiteSpace: 'nowrap',
+                            onclick() {
+                                shape.v.splice(index + 1, 0, location);
+                                mf.redraw();
+                                c.addVertexEditor(shape, root);
                             },
+                            title: 'Insert New Vertex',
                         },
-                        [create('X:', 0), create('Y:', 1)]
+                        []
                     );
                 }
 
-                root.firstChild.append(vertex);
+                let displayed = false;
 
-                root.firstChild.append(...shape.v.map((_, i) => generateVertex(i)));
+                let vertex = root.querySelector('.vertex');
+
+                if (vertex == null) {
+                    vertex = $.tr.vertex([
+                        $.td.mapeditor_rightbox_table_leftcell(['Vertices']),
+                        $.td.mapeditor_rightbox_table_leftcell(
+                            $.div.mapeditor_rightbox_table_shape_pm['vertex-button'](
+                                {
+                                    onclick() {
+                                        displayed = !displayed;
+                                        if (displayed) {
+                                            this.innerText = '-';
+                                        } else {
+                                            this.innerText = '+';
+                                        }
+                                        vertex.classList.toggle('vertex-displayed');
+                                    },
+                                },
+                                ['+']
+                            )
+                        ),
+                    ]);
+                    root.append(vertex);
+                }
+
+                function generateVertex(index) {
+                    const x = create('X: ', shape.v[index], 0);
+                    x.style.paddingLeft = '5px';
+                    const y = create('Y: ', shape.v[index], 1);
+                    y.style.position = 'relative';
+                    y.style.left = '-20px';
+                    const z = $.td.brownButton.buttonShadow['vertex-close'](
+                        {
+                            onclick() {
+                                shape.v.splice(index, 1);
+                                mf.redraw();
+                                c.addVertexEditor(shape, root);
+                            },
+                            title: 'Delete Vertex',
+                        },
+                        []
+                    );
+                    const arr = [x, y, z];
+                    if (index > 0) arr.push(createAddButton(index - 1));
+                    return $.tr['vertex-display'](arr);
+                }
+                vertex.after(
+                    ...shape.v.map((_, i) => generateVertex(i)),
+                    $.tr['vertex-display']({ style: 'height: 20px;' }, [
+                        $.td.mapeditor_rightbox_table_leftcell([]),
+                        $.td.mapeditor_rightbox_table_leftcell([]),
+                        createAddButton(shape.v.length - 1),
+                    ])
+                );
             };
         },
     });

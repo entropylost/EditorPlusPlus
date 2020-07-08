@@ -5,6 +5,18 @@ import $ from '@implode-nz/html/';
 const epp = {};
 epp.$ = $;
 
+import { version } from '../manifest.json';
+epp.version = `v${version}`;
+epp.discord = 'https://discord.gg/GCz7KgG';
+epp.changelog = [
+    [
+        '0.5.0',
+        `Moved complicated settings to Advanced tab.\
+ Added new feature: Polygon Editing.\
+ Select works by shift-clicking.`,
+    ],
+];
+
 let loadingFinished = false;
 
 function refreshUI() {
@@ -35,13 +47,17 @@ function getStorage(x) {
     return JSON.parse(localStorage.getItem('epp.' + x)) || (config[x] && (setStorage(x, config[x]), config[x]));
 }
 
+epp.getStorage = getStorage;
+
 function setStorage(x, value) {
     localStorage.setItem('epp.' + x, JSON.stringify(value));
 }
 
+epp.setStorage = setStorage;
+
 function refresh() {
     // Requests refresh of page.
-    epp.theme.info('Please refresh the page for Editor++ to update.');
+    epp.theme.info('Please refresh the page for Editor++ to update plugins.');
     return false;
 }
 
@@ -154,7 +170,10 @@ function injectMain(src) {
             }
         } catch (e) {
             console.log(e);
-            alert('Editor++ does not work, please disable it.');
+            alert(
+                `Editor++ does not work, please disable it.
+If this error message appears not because of a bonk2.io update, please inform us of this bug via discord (${epp.discord}) or email (rg@youxplode.com).`
+            );
         }
     })();
 

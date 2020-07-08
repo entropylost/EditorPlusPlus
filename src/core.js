@@ -1,4 +1,31 @@
-function initialize() {
+function initialize(epp) {
+    const { $ } = epp;
+
+    import('./core.styl');
+
+    (() => {
+        function call() {
+            const b2Header = document.getElementById('bonkioheader');
+            const cr = document.getElementById('cpms_r');
+            if (b2Header == null || cr == null) return false;
+            cr.parentNode.removeChild(cr);
+            b2Header.append(
+                $.a(
+                    'epp-header',
+                    {
+                        href: epp.discord,
+                        target: '_blank',
+                    },
+                    [$.span('epp-header-left', ['Editor++']), $.span('epp-header-right', [epp.version])]
+                )
+            );
+            return true;
+        }
+        const a = setInterval(() => {
+            if (call()) clearInterval(a);
+        }, 1000);
+    })();
+
     setTimeout(() => {
         const c = 'font-size: large;';
         const c1 = c + 'background-color: #282c34; color: white;';
@@ -36,10 +63,10 @@ export default (epp) =>
         name: 'core',
         description: 'The base module. Do not deactivate.',
         dependencies: [],
-        init: initialize,
+        init: () => initialize(epp),
         hidden: true,
         display() {
-            const { theme } = epp;
+            const { theme, $ } = epp;
             const root = theme.pages.root;
 
             const elements = [];
@@ -78,10 +105,42 @@ export default (epp) =>
             } else {
                 theme.pages.editor.clear();
             }
+
+            if (theme.pages.advanced == null) {
+                const advanced = theme.page('advanced', 'Advanced', []);
+                const current = theme.next('Advanced', advanced);
+                buttons.push(current);
+                root.append(current);
+            } else {
+                theme.pages.advanced.clear();
+            }
+
+            if (theme.pages.changelog == null) {
+                const cls = epp.changelog.map(([ver, txt]) =>
+                    $.div['epp-changelog']([
+                        $.div['epp-changelog-version']([`Version ${ver}`]),
+                        $.div['epp-changelog-text']([txt]),
+                    ])
+                );
+                const changelog = theme.page('changelog', 'Changelog', cls);
+                const elements = [
+                    theme.seperator(),
+                    theme.next('Changelog', changelog),
+                    theme.button({
+                        type: 'ternary',
+                        text: 'Discord',
+                        ternary: '#999999',
+                        click: () => window.open(epp.discord),
+                    }),
+                    theme.toggle('Hello', () => {}),
+                ];
+                root.append(...elements);
+                buttons.push(...elements);
+            }
         },
         hide() {
             const { theme } = epp;
             buttons.forEach((current) => theme.pages.root.remove(current));
-            theme.pages.plugins.destroy();
+            ['plugins', 'editor', 'advanced', 'changelog'].forEach((x) => epp.theme.pages[x].destroy());
         },
     });

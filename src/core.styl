@@ -1,0 +1,36 @@
+@import './truncate.styl'
+
+#epp-header
+    truncate(100%, 100%, 0.3em)
+
+    margin-left: 1em
+    text-decoration: none
+
+    #epp-header-left
+        background: #282c34
+        color: #DDD
+        padding: 0 0.5em
+    #epp-header-right
+        background: white
+        color: #121A22
+        padding: 0 0.5em
+.epp-changelog
+    padding: 0.5em
+    margin: 0.4em
+    border-radius: 0.3em
+    border: 1px solid white
+    text-align: center
+    font-size: 0.9em
+.epp-changelog-version
+    font-weight: bold
+.epp-changelog-text
+    font-size: 0.75em
+    white-space: pre-line
+#bonkioheader
+    z-index: 10000
+#pagecontainer > #bonkiocontainer
+    position: absolute;
+    left: 18rem
+    top: 50%
+    transform: translateY(-49%)
+    margin: 0
