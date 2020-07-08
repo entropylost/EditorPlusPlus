@@ -10,6 +10,7 @@
 export default (epp) =>
     epp.plugin({
         id: 'hexcolor',
+        name: 'Hex Color Picker',
         dependencies: [],
         init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _, delayed }) {
             const word = _('\\w+');

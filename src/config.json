@@ -8,6 +8,7 @@
         "hexcolor": true,
         "mapsizeoptions": true,
         "select": true,
-        "multiapply": true
+        "multiapply": true,
+        "polygonedit": true
     }
 }

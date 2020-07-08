@@ -7,6 +7,7 @@ function refreshPlatforms() {
 export default (epp) =>
     epp.plugin({
         id: 'select',
+        hidden: true,
         dependencies: ['mapfinder'],
         init(c, mf) {
             c.select = [];

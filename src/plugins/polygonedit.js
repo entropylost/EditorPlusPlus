@@ -1,6 +1,7 @@
 export default (epp) =>
     epp.plugin({
         id: 'polygonedit',
+        name: 'Edit Polygons',
         dependencies: ['mapfinder'],
         init(c, mf, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
             import('./polygonedit.styl');

@@ -6,9 +6,7 @@ function initialize(epp) {
     (() => {
         function call() {
             const b2Header = document.getElementById('bonkioheader');
-            const cr = document.getElementById('cpms_r');
-            if (b2Header == null || cr == null) return false;
-            cr.parentNode.removeChild(cr);
+            if (b2Header == null) return false;
             b2Header.append(
                 $.a(
                     'epp-header',
@@ -19,6 +17,10 @@ function initialize(epp) {
                     [$.span('epp-header-left', ['Editor++']), $.span('epp-header-right', [epp.version])]
                 )
             );
+            setTimeout(() => {
+                b2Header.style.fontSize = '16px';
+                setTimeout(() => (b2Header.style.fontSize = '17px'), 250);
+            }, 250);
             return true;
         }
         const a = setInterval(() => {
@@ -52,7 +54,14 @@ function initialize(epp) {
             c1,
             ...cls
         );
-    }, 3000);
+        if (epp.getStorage('core.firstInstall', true)) {
+            alert(
+                `Welcome to Editor++! Please note that Editor++ is currently a work in progress and there may be bugs.\
+ If you find any, feel free to report them.`
+            );
+            epp.setStorage('core.firstInstall', false);
+        }
+    }, 5000);
 }
 
 const buttons = [];
@@ -67,7 +76,8 @@ export default (epp) =>
         hidden: true,
         display() {
             const { theme, $ } = epp;
-            const root = theme.pages.root;
+            const { pages } = theme;
+            const root = pages.root;
 
             const elements = [];
 
@@ -87,35 +97,41 @@ export default (epp) =>
                 );
             }
 
-            if (theme.pages.plugins == null) {
+            if (pages.plugins == null) {
                 const plugins = theme.page('plugins', 'Plugins', elements);
                 const current = theme.next('Plugins', plugins);
                 buttons.push(current);
                 root.append(current);
             } else {
-                theme.pages.plugins.clear();
-                theme.pages.plugins.append(...elements);
+                pages.plugins.clear();
+                pages.plugins.append(...elements);
             }
 
-            if (theme.pages.editor == null) {
+            if (pages.editor == null) {
                 const editor = theme.page('editor', 'Editor Menu', []);
                 const current = theme.next('Editor Menu', editor);
                 buttons.push(current);
                 root.append(current);
             } else {
-                theme.pages.editor.clear();
+                pages.editor.clear();
+                pages.editor.append(
+                    $.div(
+                        { style: 'text-indent: 0.5em; padding-left: 0.5em' },
+                        'Sorry, this part of Editor++ has not been made yet. Please contact me via discord if you have a feature you wish to insert here.'
+                    )
+                );
             }
 
-            if (theme.pages.advanced == null) {
+            if (pages.advanced == null) {
                 const advanced = theme.page('advanced', 'Advanced', []);
-                const current = theme.next('Advanced', advanced);
+                const current = theme.next('Advanced Settings', advanced);
                 buttons.push(current);
                 root.append(current);
             } else {
-                theme.pages.advanced.clear();
+                pages.advanced.clear();
             }
 
-            if (theme.pages.changelog == null) {
+            if (pages.changelog == null) {
                 const cls = epp.changelog.map(([ver, txt]) =>
                     $.div['epp-changelog']([
                         $.div['epp-changelog-version']([`Version ${ver}`]),
@@ -130,17 +146,17 @@ export default (epp) =>
                         type: 'ternary',
                         text: 'Discord',
                         ternary: '#999999',
+                        secondary: '#171F27',
                         click: () => window.open(epp.discord),
                     }),
-                    theme.toggle('Hello', () => {}),
                 ];
                 root.append(...elements);
                 buttons.push(...elements);
             }
         },
         hide() {
-            const { theme } = epp;
-            buttons.forEach((current) => theme.pages.root.remove(current));
-            ['plugins', 'editor', 'advanced', 'changelog'].forEach((x) => epp.theme.pages[x].destroy());
+            const pages = epp.theme.pages;
+            buttons.forEach((current) => pages.root.remove(current));
+            ['plugins', 'editor', 'advanced', 'changelog'].forEach((x) => pages[x].destroy());
         },
     });

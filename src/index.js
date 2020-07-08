@@ -9,6 +9,7 @@ import { version } from '../manifest.json';
 epp.version = `v${version}`;
 epp.discord = 'https://discord.gg/GCz7KgG';
 epp.changelog = [
+    ['0.5.1', `Fixed plugins page having overlapping text, and some bugs in chrome.`],
     [
         '0.5.0',
         `Moved complicated settings to Advanced tab.\
@@ -43,8 +44,10 @@ function initializeTheme(quickInit = false, forceInit = false) {
     refreshUI();
 }
 
-function getStorage(x) {
-    return JSON.parse(localStorage.getItem('epp.' + x)) || (config[x] && (setStorage(x, config[x]), config[x]));
+function getStorage(x, def = config[x]) {
+    const parse = JSON.parse(localStorage.getItem('epp.' + x));
+    if (parse == null) return def && (setStorage(x, def), def);
+    return parse;
 }
 
 epp.getStorage = getStorage;

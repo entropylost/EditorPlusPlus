@@ -25,10 +25,10 @@
     &::after
         transform: rotate(-45deg)
 .vertex-display
-    position: relative
     display: none
+    transform: scale(1) // Hack because position: relative doesn't work in chrome.
 .vertex.vertex-displayed ~ .vertex-display
-    display: revert
+    display: table-row
 .vertex-add
     position: absolute
     right: 3px

@@ -1,6 +1,7 @@
 export default (epp) =>
     epp.plugin({
         id: 'mapfinder',
+        hidden: true,
         dependencies: [],
         init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
             const word = _('\\w+');

@@ -1,6 +1,7 @@
 export default (epp) =>
     epp.plugin({
         id: 'mapsizeoptions',
+        name: 'Bigger Map Sizes',
         dependencies: [],
         init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
             $`

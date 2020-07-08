@@ -32,8 +32,8 @@ module.exports = {
             },
         ],
     },
-    mode: 'development',
-    devtool: 'source-map',
+    mode: 'production',
+    // devtool: 'source-map',
     performance: { hints: false },
     plugins: [
         new webpack.optimize.LimitChunkCountPlugin({

@@ -1,26 +1,43 @@
 let handler;
 let platformChangeHandler;
+let multiapplyPageNext;
 
 export default (epp) =>
     epp.plugin({
         id: 'multiapply',
+        name: 'Multi-Apply',
         dependencies: ['select', 'mapfinder'],
         allowReloading: true,
         display(c) {
-            c.hide();
+            const { theme } = epp;
+            const { pages } = theme;
+
+            if (multiapplyPageNext == null) {
+                const page = theme.page('multiapply', 'Multi-Apply', []);
+                multiapplyPageNext = theme.next('Multi-Apply Settings', page);
+                pages.advanced.append(multiapplyPageNext);
+            } else pages.multiapply.clear();
             const names = {
                 number: ['Numbers:', 'Numeric values such as density, friction, and position.'],
                 boolean: ['Booleans:', 'Values which are either on or off (friction, collide with).'],
             };
             for (const [k, v] of Object.entries(c.modes)) {
-                const r = epp.theme.toggle(names[k][0], (active) => {
-                    
-                }, true, names[k][1]);
+                const r = epp.theme.toggle(
+                    names[k][0],
+                    (active) => {
+                        const x = active ? 1 : 0;
+                        epp.setStorage(`multiapply.${k}`, x);
+                        c.mode[k] = v[x];
+                    },
+                    v.indexOf(c.mode[k]) === 1,
+                    names[k][1]
+                );
                 r.classList.add('multiapplyoption');
-                epp.theme.pages.editor.append(r);
+                pages.multiapply.append(r);
             }
         },
         hide() {
+            epp.theme.pages.multiapply.clear();
             document.querySelectorAll('.multiapplyoption').forEach((x) => x.parentNode.removeChild(x));
         },
         activate(c, sel, mf) {
@@ -59,8 +76,8 @@ export default (epp) =>
             };
 
             c.mode = {
-                number: numberModes[1],
-                boolean: booleanModes[1],
+                number: numberModes[epp.getStorage('multiapply.number', 1)],
+                boolean: booleanModes[epp.getStorage('multiapply.number', 1)],
             };
 
             const disallowed = { n: true, fx: true };
