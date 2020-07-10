@@ -18,31 +18,31 @@ if (epp && epp.plugins && epp.plugins.select) {
     if (arguments[0].shiftKey) {
         epp.plugins.select.update(${m.index});
     } else {
-        epp.plugins.select.disable();
+        epp.plugins.select.disable(${m.index});
     }
 }
                 `
             );
             c.update = (n) => {
-                if (mf.lastPlatformIndex == null) c.disable();
                 const o = mf.lastPlatformIndex;
+                if (o == null) c.disable();
                 refreshPlatforms();
                 if (platforms == null) return;
                 if (!c.select.includes(n)) {
                     c.select.push(n);
                     platforms[n].classList.add('platform-selected');
                 }
-                if (o != null && !c.select.includes(o)) {
-                    c.select.push(o);
+                if (c.select.includes(o)) {
                     platforms[o].classList.add('platform-selected');
                 }
             };
-            c.disable = () => {
+            c.disable = (i) => {
                 c.select = [];
                 if (platforms != null)
                     for (const x of platforms) {
                         x.classList.remove('platform-selected');
                     }
+                if (i != null) c.select.push(i);
             };
         },
     });
