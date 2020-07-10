@@ -3,18 +3,18 @@ export default (epp) =>
         id: 'polygonedit',
         name: 'Edit Polygons',
         dependencies: ['mapfinder'],
-        init(c, mf, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
+        init(c, mf, { defineLocation: $, entry, matchStart: ms, matchEnd: me }) {
             import('./polygonedit.styl');
 
-            const lines = _('(?:\\n                        [^\\n]*)*');
-            const arrAccess = _('\\w+\\[\\d+\\]');
+            const lines = /(?:\n[ ]{24}[^\n]*)*/;
+            const arrAccess = /\w+\[\d+\]/;
             $`
                     } else if (${arrAccess}[${'type'}] == ${'po'}) {
                         ${arrAccess} = ${'Yes'};
                         if (${ms('pComplete')}${arrAccess}${me}) {
                             ${arrAccess} = ${'No'};
                         }
-                        ${_('\\w+')}(${ms('root')}${arrAccess}${me}, ${'Convex'}, {${lines}(${ms(
+                        ${/\w+/}(${ms('root')}${arrAccess}${me}, ${'Convex'}, {${lines}(${ms(
                 'polygon'
             )}${arrAccess}${me}[${'s'}]));${entry('#polygonInsert')}
                     }`;

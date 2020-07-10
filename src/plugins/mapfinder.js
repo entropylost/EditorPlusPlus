@@ -3,11 +3,11 @@ export default (epp) =>
         id: 'mapfinder',
         hidden: true,
         dependencies: [],
-        init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
-            const word = _('\\w+');
-            const line = _('[^\\n]+');
-            const arrAccess = _('\\w+\\[\\d+\\]');
-            const argsAccess = _('\\w+\\[0\\]\\[\\d+\\]');
+        init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me }) {
+            const word = /\w+/;
+            const line = /[^\n]+/;
+            const arrAccess = /\w+\[\d+\]/;
+            const argsAccess = /\w+\[0\]\[\d+\]/;
 
             c.lastInitValid = false;
 

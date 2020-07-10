@@ -9,6 +9,7 @@ import { version } from '../manifest.json';
 epp.version = `v${version}`;
 epp.discord = 'https://discord.gg/GCz7KgG';
 epp.changelog = [
+    ['0.6.0', `Added a button to only shift the screen while the menu is open in Advanced Settings.`],
     ['0.5.1', `Fixed plugins page having overlapping text, and some bugs in chrome.`],
     [
         '0.5.0',
@@ -361,12 +362,6 @@ function injector(plugin, f, extra = []) {
     const matchEnd = {
         type: 'matchEnd',
     };
-    function regex(text) {
-        return {
-            type: 'regex',
-            data: text,
-        };
-    }
     function delayed(f) {
         return {
             type: 'delayed',
@@ -379,7 +374,7 @@ function injector(plugin, f, extra = []) {
             data: f,
         };
     }
-    delayed.r = delayedRegex;
+    delayed.re = delayedRegex;
     function defineLocation(escape, strings, ...values) {
         matchers.push((matchStr, replace) => {
             let capIndex = 0;
@@ -399,7 +394,9 @@ function injector(plugin, f, extra = []) {
                         entries[capIndex] = v;
                         break;
                     case 'object':
-                        if (v.type === 'matchStart') {
+                        if (v instanceof RegExp) {
+                            str += v.source;
+                        } else if (v.type === 'matchStart') {
                             if (isWithinMatch)
                                 throw new Error(
                                     'Can not use matchStart while the amount of matchStarts is greater than the amount of matchEnds'
@@ -413,8 +410,6 @@ function injector(plugin, f, extra = []) {
                             capIndex++;
                             str += ')(';
                             isWithinMatch = false;
-                        } else if (v.type === 'regex') {
-                            str += v.data;
                         } else if (v.type === 'delayed') {
                             str += v.data();
                         } else throw new Error('Invalid Type.');
@@ -443,7 +438,6 @@ function injector(plugin, f, extra = []) {
         entry,
         matchStart,
         matchEnd,
-        regex,
         delayed,
     });
 }
@@ -470,9 +464,9 @@ defaultTheme(epp);
     const rp = require.context('./plugins/', true, /\.js$/);
     rp.keys().forEach((x) => rp(x).default(epp));
 }
-
 if (window.eppPlugins != null && Array.isArray(window.eppPlugins)) {
-    for (let x of window.eppPlugins) {
+    for (const x of window.eppPlugins) {
+        console.log(x);
         if (typeof x === 'function') {
             try {
                 x(epp);

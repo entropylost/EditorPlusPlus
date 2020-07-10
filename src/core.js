@@ -3,6 +3,8 @@ function initialize(epp) {
 
     import('./core.styl');
 
+    document.body.classList[epp.getStorage('core.alwaysShift', false) ? 'add' : 'remove']('epp-open-always');
+
     (() => {
         function call() {
             const b2Header = document.getElementById('bonkioheader');
@@ -129,6 +131,17 @@ export default (epp) =>
                 root.append(current);
             } else {
                 pages.advanced.clear();
+                pages.advanced.append(
+                    theme.toggle(
+                        'Always Shift',
+                        (activated) => {
+                            epp.setStorage('core.alwaysShift', activated);
+                            document.body.classList[activated ? 'add' : 'remove']('epp-open-always');
+                        },
+                        epp.getStorage('core.alwaysShift'),
+                        'If activated the bonk2.io window is always shifted, otherwise it shifts when the Editor++ window is opened.'
+                    )
+                );
             }
 
             if (pages.changelog == null) {

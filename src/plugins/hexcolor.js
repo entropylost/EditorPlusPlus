@@ -12,12 +12,12 @@ export default (epp) =>
         id: 'hexcolor',
         name: 'Hex Color Picker',
         dependencies: [],
-        init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _, delayed }) {
-            const word = _('\\w+');
-            const wordsWithCommas = _('(?:\\w+, )*\\w+');
-            const line = _('[^\\n]+');
-            const arrAccess = _('\\w+\\[\\d+\\]');
-            const argsAccess = _('\\w+\\[0\\]\\[\\d+\\]');
+        init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, delayed }) {
+            const word = /\w+/;
+            const wordsWithCommas = /(?:\w+, )*\w+/;
+            const line = /[^\n]+/;
+            const arrAccess = /\w+\[\d+\]/;
+            const argsAccess = /\w+\[0\]\[\d+\]/;
 
             $`${entry('#insertHexColorPickerHere')}
             this[${'showColorPicker'}] = function(${wordsWithCommas}) {

@@ -3,9 +3,9 @@ export default (epp) =>
         id: 'mapsizeoptions',
         name: 'Bigger Map Sizes',
         dependencies: [],
-        init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me, regex: _ }) {
+        init(c, { defineLocation: $, entry, matchStart: ms, matchEnd: me }) {
             $`
-                ${ms('array')}${_('\\w+\\[\\d+\\]')}${me}[${'push'}]({
+                ${ms('array')}${/\w+\[\d+\]/}${me}[${'push'}]({
                     value: 5,
                     text: ${'13 - Biggest'}
                 });${entry('#endingMapEditor')}`;

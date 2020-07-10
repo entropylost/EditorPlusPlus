@@ -12,7 +12,7 @@ function activate(epp) {
         'title',
         {
             onclick() {
-                container.classList.toggle('activated');
+                shadow.classList.toggle('activated');
             },
         },
         [$.div.icon('icon', []), titleInterior]
@@ -20,9 +20,7 @@ function activate(epp) {
     const interior = $.div('interior', []);
     const container = $.div('container', [title, interior]);
     const shadow = $.div('container-shadow', container);
-    const infocontainer = $.div('info-container', []);
-    document.body.appendChild(shadow);
-    document.body.appendChild(infocontainer);
+    document.body.prepend(shadow);
 
     // Page manipulation
 
@@ -201,12 +199,7 @@ function activate(epp) {
         return $.div['checkbox-container']([input, label]);
     };
 
-    theme.info = (text) => {
-        alert(text);
-        // const info = $.div.info([$.span['info-interior']([text])]);
-        // info.addEventListener('animationend', () => infocontainer.removeChild(info));
-        // infocontainer.appendChild(info);
-    };
+    theme.info = alert;
 
     theme.seperator = () => $.div.seperator([]);
 

@@ -17,6 +17,30 @@ secondary = #121A22
 dimmed = #999
 
 
+// Shift the window when activated
+
+#bonkioheader
+    z-index: 10000
+#pagecontainer > #bonkiocontainer
+    position: absolute;
+    left: 50%
+    top: 50%
+    transform: translate(-50%, -49%)
+    margin: 0
+    transition: transform buttonTime, left buttonTime
+
+#container-shadow.activated ~ #pagecontainer > #bonkiocontainer, body.epp-open-always > #pagecontainer > #bonkiocontainer
+    transform: translateY(-49%)
+    left: 18rem
+
+#cpms_r
+    transition: transform buttonTime
+#container-shadow.activated ~ #cpms_r, body.epp-open-always > #cpms_r
+    transform: translate(100%, -50%)
+
+body
+    overflow: hidden
+
 #container
     position: fixed
     left: 0
@@ -30,7 +54,7 @@ dimmed = #999
     font-family: 'Source Sans Pro', Arial, sans-serif
     font-size: 1rem
 
-    &.activated
+    #container-shadow.activated > &
         truncate-right(100%, 100%, 0.4rem)
 // Use clip-path as a hack instead of using height: auto because it can be animated.
 // This does effectively the same thing but doesn't trigger a reflow.
@@ -47,7 +71,7 @@ dimmed = #999
     padding: 0
     font-size: 1.5em
 
-    #title:hover + &, #container.activated > &
+    #title:hover + &, #container-shadow.activated &
         width: extendedSize
 
 #container-shadow
@@ -78,7 +102,7 @@ dimmed = #999
     user-select: none
     cursor: pointer
 
-    &:hover, #container.activated > &
+    &:hover, #container-shadow.activated &
         width: extendedSize
         color: secondary
         background: primary
@@ -339,15 +363,6 @@ page-ar()
     .hidden:checked ~ .checkbox-label::before
         transform: translate(-50%, -50%) scale(1)
         background: primary
-
-#info-container
-    position: fixed
-    bottom: 0%
-    left: 0%
-    width: 100%
-    font-size: 1.3em
-    font-family: 'Source Sans Pro', Arial, sans-serif
-    filter: drop-shadow(3px 3px 2px #0004) drop-shadow(0px 0px 5px #0002)
 
 .button
     padding: 0.5em
