@@ -44,15 +44,17 @@ let text = '';
             activate(c, mf) {
                 const values = ['physics', 'spawns', 'capZones'];
                 c.copy = () => {
-                    text = JSON.stringify(mf.map);
+                    text = JSON.stringify(mf.map());
                 };
 
                 c.paste = () => {
                     try {
                         const copied = JSON.parse(text);
+                        const map = mf.map();
                         for (const x of values) {
-                            mf.map[x] = JSON.parse(JSON.stringify(copied[x]));
+                            map[x] = JSON.parse(JSON.stringify(copied[x]));
                         }
+                        mf.redraw();
                     } catch (e) {
                         epp.theme.info('Can not paste map; invalid text in clipboard.');
                     }

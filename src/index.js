@@ -466,7 +466,6 @@ defaultTheme(epp);
 }
 if (window.eppPlugins != null && Array.isArray(window.eppPlugins)) {
     for (const x of window.eppPlugins) {
-        console.log(x);
         if (typeof x === 'function') {
             try {
                 x(epp);
