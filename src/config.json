@@ -9,6 +9,8 @@
         "mapsizeoptions": true,
         "select": true,
         "multiapply": true,
-        "polygonedit": true
+        "polygonedit": true,
+        "merge": true,
+        "mapmerge": true
     }
 }

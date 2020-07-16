@@ -28,10 +28,9 @@ if (epp && epp.plugins && epp.plugins.select) {
                 if (o == null) c.disable();
                 refreshPlatforms();
                 if (platforms == null) return;
-                if (!c.select.includes(n)) {
-                    c.select.push(n);
-                    platforms[n].classList.add('platform-selected');
-                }
+                c.select = c.select.filter((x) => x !== n);
+                c.select.push(n);
+                platforms[n].classList.add('platform-selected');
                 if (c.select.includes(o)) {
                     platforms[o].classList.add('platform-selected');
                 }

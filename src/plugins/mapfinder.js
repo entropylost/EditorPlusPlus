@@ -11,6 +11,11 @@ export default (epp) =>
 
             c.lastInitValid = false;
 
+            c.refresh = () => {
+                document.getElementById('mapeditor_close').click();
+                document.getElementById('newbonklobby_editorbutton').click();
+            };
+
             $`${entry('#physicsIntercept')}
             function ${ms('refresh')}${word}${me}(${word}) {${entry('#beforeRefresh')}
                 var ${word} = [arguments];
@@ -21,8 +26,7 @@ export default (epp) =>
 
             c.locations['#physicsIntercept'](
                 (m) => `
-                epp.plugins.mapfinder.map = () => ${m.map};
-                epp.plugins.mapfinder.refresh = (x) => ${m.refresh}(x)`
+                epp.plugins.mapfinder.map = () => ${m.map};`
             );
             c.locations['#beforeRefresh'](
                 () => `

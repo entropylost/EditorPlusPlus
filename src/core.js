@@ -116,12 +116,6 @@ export default (epp) =>
                 root.append(current);
             } else {
                 pages.editor.clear();
-                pages.editor.append(
-                    $.div(
-                        { style: 'text-indent: 0.5em; padding-left: 0.5em' },
-                        'Sorry, this part of Editor++ has not been made yet. Please contact me via discord if you have a feature you wish to insert here.'
-                    )
-                );
             }
 
             if (pages.advanced == null) {

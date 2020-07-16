@@ -54,7 +54,7 @@ let text = '';
                         for (const x of values) {
                             map[x] = JSON.parse(JSON.stringify(copied[x]));
                         }
-                        mf.redraw();
+                        mf.refresh();
                     } catch (e) {
                         epp.theme.info('Can not paste map; invalid text in clipboard.');
                     }

@@ -216,6 +216,7 @@ function activate(epp) {
         ternary = primary,
         inline = false,
         toggle = false,
+        hover = '',
     }) => {
         const button = $.div.button({
             onclick() {
@@ -237,6 +238,7 @@ function activate(epp) {
         button.classList.add(typeClass);
         if (inline) button.classList.add('button-inline');
         if (toggle) button.classList.add('button-toggle');
+        if (hover) button.title = hover;
         return button;
     };
 
