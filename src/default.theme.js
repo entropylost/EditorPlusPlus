@@ -1,5 +1,5 @@
 import 'overlayscrollbars/css/OverlayScrollbars.css';
-import './os-theme-block-light.css';
+import './os-theme-block-light.styl';
 import OverlayScrollbars from 'overlayscrollbars/';
 
 function activate(epp) {
