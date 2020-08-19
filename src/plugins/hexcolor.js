@@ -31,19 +31,22 @@ export default (epp) =>
                 ${ms('saturation')}${arrAccess}${me} = ${arrAccess}[${'saturation'}];
 ${line}
 ${line}
+${line}
 ${line}${entry('#setColorPickerValue')}
                 ${ms('refresh')}${word}${me}();`;
-            // this["showColorPicker" /*v5y.c25(981)*/ ] = function(j6a, G6a, F6a, S6a) {
-            //     var j0B = [arguments];
-            //     b0B[9]["style" /*v5y.d25(3184)*/ ]["backgroundColor" /*v5y.d25(2631)*/ ] = m9B[24]["numToHex" /*v5y.d25(73)*/ ](j0B[0][0]);
-            //     j0B[8] = Y2Y(j0B[0][0]);
-            //     b0B[55] = j0B[8]["hue" /*v5y.c25(2521)*/ ];
-            //     b0B[80] = j0B[8]["brightness" /*v5y.d25(1916)*/ ];
-            //     b0B[17] = j0B[8]["saturation" /*v5y.c25(2002)*/ ];
-            //     b0B[26] = j0B[0][2];
-            //     b0B[22] = j0B[0][3];
-            //     b0B[52] = j0B[0][0];
-            //     n9Y();
+            // this["showColorPicker" /*h22.Z45(2395)*/ ] = function(S1v, I1v, U1v, V1v) {
+            //     var V5X = [arguments];
+            //     J5X[6]["style" /*h22.e45(3175)*/ ]["backgroundColor" /*h22.e45(1382)*/ ] = E2Q[11]["numToHex" /*h22.e45(83)*/ ](V5X[0][0]);
+            //     V5X[1] = n0o(V5X[0][0]);
+            //     J5X[57] = V5X[1]["hue" /*h22.Z45(801)*/ ];
+            //     J5X[69] = V5X[1]["brightness" /*h22.Z45(3508)*/ ];
+            //     J5X[86] = V5X[1]["saturation" /*h22.e45(2476)*/ ];
+            //     h22.u22();
+            //     J5X[39] = V5X[0][2];
+            //     J5X[12] = V5X[0][3];
+            //     J5X[56] = V5X[0][0];
+            //     b0o();
+
             c.locations['#insertHexColorPickerHere'](
                 (m) => `
 const view = {
@@ -80,14 +83,17 @@ epp.plugins.hexcolor.insertHexColorPicker(view);`
                 var ${word} = [arguments];
 ${line}
 ${line}
+${line}
                 ${arrAccess}[${'style'}][${'backgroundColor'}] = ${ms(
                 'hsbConverter'
             )}${word}${me}(${arrAccess}, ${arrAccess}, ${arrAccess});`;
-            // function n9Y() {
-            //     var u0B = [arguments];
-            //     u0B[7] = true;
-            //     X2Y(b0B[55], b0B[17], b0B[80], u0B[7]);
-            //     b0B[4]["style" /*v5y.c25(3184)*/ ]["backgroundColor" /*v5y.c25(2631)*/ ] = j2Y(b0B[55], b0B[17], b0B[80]);
+
+            // function b0o() {
+            //     var m5X = [arguments];
+            //     h22.u22();
+            //     m5X[1] = true;
+            //     R0o(J5X[57], J5X[86], J5X[69], m5X[1]);
+            //     J5X[8]["style" /*h22.e45(3175)*/ ]["backgroundColor" /*h22.Z45(1382)*/ ] = c0o(J5X[57], J5X[86], J5X[69]);
             c.locations['#refresh'](
                 (m) => `
 let res = ${m.hsbConverter}(${m.hue}, ${m.saturation}, ${m.brightness})

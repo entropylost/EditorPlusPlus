@@ -79,7 +79,7 @@ export default (epp) =>
                 const name = document.getElementById('pretty_top_name').innerText;
                 const map = mf.map();
                 if (map.m.cr.length === 0) map.m.cr.push(name);
-                map.m.cr.push('|' + name);
+                if (!map.m.cr.contains('|' + name)) map.m.cr.push('|' + name);
             };
 
             c.setCurrent = () => {

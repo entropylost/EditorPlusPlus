@@ -42,15 +42,12 @@ if (epp != null && epp.plugins != null && epp.plugins.mapfinder != null) {
             );
             $`
                         ${arrAccess} = ${arrAccess}[${'insertRow'}]();
-${line}
                         ${arrAccess}[${'onclick'}] = function() {${entry('platformclick')}
-                            var ${word} = [arguments];
                             ${word}(${arrAccess}[${'physics'}][${'bro'}][${ms('index')}${argsAccess}${me}]);`;
-            // n1a[1] = o9a[86]["insertRow" /*v5y.c25(2357)*/ ]();
-            // v5y.C5y();
-            // n1a[1]["onclick" /*v5y.d25(1772)*/ ] = function() {
-            //     var X1a = [arguments];
-            //     i0Y(o9a[2]["physics" /*v5y.c25(856)*/ ]["bro" /*v5y.d25(3405)*/ ][n1a[0][0]]);
+            //            N8Q[8] = z0Q[76]["insertRow" /*h22.Z45(2566)*/ ]();
+            //            N8Q[8]["onclick" /*h22.e45(2069)*/ ] = function() {
+            //                h22.M22();
+            //                W3o(z0Q[5]["physics" /*h22.Z45(700)*/ ]["bro" /*h22.Z45(2535)*/ ][N8Q[0][0]]);
 
             c.locations.platformclick(
                 (m) => `

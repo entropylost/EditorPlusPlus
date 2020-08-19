@@ -9,6 +9,8 @@ import { version } from '../manifest.json';
 epp.version = `v${version}`;
 epp.discord = 'https://discord.gg/GCz7KgG';
 epp.changelog = [
+    ['1.0.2', `Updated for new version of bonk2 (again).`],
+    ['1.0.1', `Updated for new version of bonk2.`],
     ['1.0.0', `Added a device to merge maps using a template system.`],
     ['0.6.0', `Added a button to only shift the screen while the menu is open in Advanced Settings.`],
     ['0.5.1', `Fixed plugins page having overlapping text, and some bugs in chrome.`],
