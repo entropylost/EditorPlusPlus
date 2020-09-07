@@ -9,6 +9,12 @@ import { version } from '../manifest.json';
 epp.version = `v${version}`;
 epp.discord = 'https://discord.gg/GCz7KgG';
 epp.changelog = [
+    [
+        '1.0.3',
+        `Updated for new version of bonk2. \
+IMPORTANT: I WILL PROBABLY NOT UPDATE EDITOR++ AGAIN. \
+IF ANYONE WANTS TO HELP MANTAINING IT, PLEASE DM ME.`,
+    ],
     ['1.0.2', `Updated for new version of bonk2 (again).`],
     ['1.0.1', `Updated for new version of bonk2.`],
     ['1.0.0', `Added a device to merge maps using a template system.`],
@@ -102,13 +108,13 @@ function injectMain(src) {
     let source = src;
 
     (() => {
-        function replace(str, func) {
+        function replace(str, func, name) {
             let numInstances = 0;
             source = source.replace(new RegExp(str, 'g'), (...args) => {
                 numInstances++;
                 return func(...args);
             });
-            if (numInstances !== 1) throw new Error('Invalid regex at:\n' + str);
+            if (numInstances !== 1) throw new Error(`Invalid regex at ${name}:\n${str}`);
         }
 
         try {
@@ -421,16 +427,20 @@ function injector(plugin, f, extra = []) {
                 str += escape(strings.raw[i + 1]);
             }
             str += ')';
-            return replace(str, (_, ...args) => {
-                for (let i = 0; i < args.length - 2; i++)
-                    if (nameMatch[i] != null) plugin.matches[nameMatch[i]] = args[i];
-                let res = args[0];
-                for (let i = 1; i < args.length - 2; i++) {
-                    if (entries[i] != null) res += entries[i](plugin.matches);
-                    res += args[i];
-                }
-                return res;
-            });
+            return replace(
+                str,
+                (_, ...args) => {
+                    for (let i = 0; i < args.length - 2; i++)
+                        if (nameMatch[i] != null) plugin.matches[nameMatch[i]] = args[i];
+                    let res = args[0];
+                    for (let i = 1; i < args.length - 2; i++) {
+                        if (entries[i] != null) res += entries[i](plugin.matches);
+                        res += args[i];
+                    }
+                    return res;
+                },
+                plugin.name
+            );
         });
     }
     const defineLocationString = (strings, ...values) => defineLocation(escape, strings, ...values);
