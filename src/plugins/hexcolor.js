@@ -31,7 +31,6 @@ export default (epp) =>
                 ${ms('saturation')}${arrAccess}${me} = ${arrAccess}[${'saturation'}];
 ${line}
 ${line}
-${line}
 ${line}${entry('#setColorPickerValue')}
                 ${ms('refresh')}${word}${me}();`;
             // this["showColorPicker" /*h22.Z45(2395)*/ ] = function(S1v, I1v, U1v, V1v) {
@@ -81,7 +80,6 @@ epp.plugins.hexcolor.insertHexColorPicker(view);`
             $`
             function ${delayed(() => c.matches.refresh)}() {${entry('#refresh')}
                 var ${word} = [arguments];
-${line}
 ${line}
 ${line}
                 ${arrAccess}[${'style'}][${'backgroundColor'}] = ${ms(

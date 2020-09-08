@@ -9,12 +9,8 @@ import { version } from '../manifest.json';
 epp.version = `v${version}`;
 epp.discord = 'https://discord.gg/GCz7KgG';
 epp.changelog = [
-    [
-        '1.0.3',
-        `Updated for new version of bonk2. \
-IMPORTANT: I WILL PROBABLY NOT UPDATE EDITOR++ AGAIN. \
-IF ANYONE WANTS TO HELP MANTAINING IT, PLEASE DM ME.`,
-    ],
+    ['1.0.4', `Fixed Hex Color Picker.`],
+    ['1.0.3', `Updated for new version of bonk2.`],
     ['1.0.2', `Updated for new version of bonk2 (again).`],
     ['1.0.1', `Updated for new version of bonk2.`],
     ['1.0.0', `Added a device to merge maps using a template system.`],
@@ -165,7 +161,11 @@ function injectMain(src) {
                 '\\)';
 
             for (const x of matchers) {
-                x(matcher, replace);
+                try {
+                    x(matcher, replace);
+                } catch (e) {
+                    console.error(e);
+                }
             }
 
             initializeTheme(true, true);
@@ -427,7 +427,7 @@ function injector(plugin, f, extra = []) {
                 str += escape(strings.raw[i + 1]);
             }
             str += ')';
-            return replace(
+            replace(
                 str,
                 (_, ...args) => {
                     for (let i = 0; i < args.length - 2; i++)
