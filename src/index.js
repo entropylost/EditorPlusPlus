@@ -9,6 +9,8 @@ import { version } from '../manifest.json';
 epp.version = `v${version}`;
 epp.discord = 'https://discord.gg/GCz7KgG';
 epp.changelog = [
+    ['1.1.0', `Added Bonk Leagues Client compatibility, but waiting for Bonk Leagues Client.`],
+    ['1.0.5', `See Below.`],
     ['1.0.4', `Fixed Hex Color Picker.`],
     ['1.0.3', `Updated for new version of bonk2.`],
     ['1.0.2', `Updated for new version of bonk2 (again).`],
@@ -460,12 +462,14 @@ epp.plugin = plugin;
 window.epp = epp;
 
 function inject() {
-    fetch(config.alphaLocation)
-        .then((res) => res.text())
-        .then((alpha) => injectMain(jsb(alpha)));
+    if ('blPostInjectionScript' in window) {
+        injectMain(jsb(window.blPostInjectionScript));
+    } else {
+        fetch(config.alphaLocation)
+            .then((res) => res.text())
+            .then((alpha) => injectMain(jsb(alpha)));
+    }
 }
-
-inject();
 
 import core from './core';
 import defaultTheme from './default.theme';
@@ -488,3 +492,5 @@ if (window.eppPlugins != null && Array.isArray(window.eppPlugins)) {
         }
     }
 }
+
+inject();

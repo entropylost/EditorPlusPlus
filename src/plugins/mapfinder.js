@@ -43,7 +43,6 @@ if (epp != null && epp.plugins != null && epp.plugins.mapfinder != null) {
             $`
                         ${arrAccess} = ${arrAccess}[${'insertRow'}]();
                         ${arrAccess}[${'onclick'}] = function() {${entry('platformclick')}
-                            ${line}
                             ${word}(${arrAccess}[${'physics'}][${'bro'}][${ms('index')}${argsAccess}${me}]);`;
             //            N8Q[8] = z0Q[76]["insertRow" /*h22.Z45(2566)*/ ]();
             //            N8Q[8]["onclick" /*h22.e45(2069)*/ ] = function() {
@@ -63,15 +62,11 @@ if (epp != null && epp.plugins != null && epp.plugins.mapfinder != null) {
 
             $`${entry('#redraw')}
             function ${word}() {
+                ${arrAccess}[${'clearHighlightPlatform'}]();
                 ${line}
                 ${line}
-                ${arrAccess}[${'clearHighlightSpawn'}]();
-                ${line}
-                    ${line}
-                    ${line}
-                    ${line}
-                    ${line}
-                        ${ms('redraw')}L6M${me}`;
+                    ${ms('redraw')}${word}${me}`;
+
             //     F3h[31]["clearHighlightSpawn" /*A2E.g9m(1059)*/ ]();
             //     if (F3h[19] == false) {
             //         j3h[6] = 1441676794;
