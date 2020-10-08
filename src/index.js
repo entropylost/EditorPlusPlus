@@ -9,6 +9,7 @@ import { version } from '../manifest.json';
 epp.version = `v${version}`;
 epp.discord = 'https://discord.gg/GCz7KgG';
 epp.changelog = [
+    ['1.1.1', `Updated for new version of bonk2.`],
     ['1.1.0', `Added Bonk Leagues Client compatibility, but waiting for Bonk Leagues Client.`],
     ['1.0.5', `See Below.`],
     ['1.0.4', `Fixed Hex Color Picker.`],

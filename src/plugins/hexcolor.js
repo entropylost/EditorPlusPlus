@@ -82,6 +82,7 @@ epp.plugins.hexcolor.insertHexColorPicker(view);`
                 var ${word} = [arguments];
 ${line}
 ${line}
+${line}
                 ${arrAccess}[${'style'}][${'backgroundColor'}] = ${ms(
                 'hsbConverter'
             )}${word}${me}(${arrAccess}, ${arrAccess}, ${arrAccess});`;
@@ -92,6 +93,7 @@ ${line}
             //     m5X[1] = true;
             //     R0o(J5X[57], J5X[86], J5X[69], m5X[1]);
             //     J5X[8]["style" /*h22.e45(3175)*/ ]["backgroundColor" /*h22.Z45(1382)*/ ] = c0o(J5X[57], J5X[86], J5X[69]);
+
             c.locations['#refresh'](
                 (m) => `
 let res = ${m.hsbConverter}(${m.hue}, ${m.saturation}, ${m.brightness})
